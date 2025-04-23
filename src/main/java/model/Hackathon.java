@@ -141,17 +141,14 @@ public class Hackathon {
         this.indirizzoSede = indirizzoSede;
     }
 
-
-    // vedi da qui!!
-
-    // Metodo utilizzato per il calcolo della classifica di un hackathon
+    // metodo utilizzato per il calcolo della classifica di un hackathon
     private String calcolaClassifica() {
         // verifica che l'Hackathon sia concluso
         if(!isTerminato()) {
             throw new IllegalStateException("L'Hackathon è ancora in corso. Impossibile calcolare la classifica!");
         }
 
-        // RIVEDI QUI (prende i team della lista, li ordina per punteggio, li converte in stringa
+        // prende i team della lista, li ordina per punteggio (decrescente), li converte in formato stringa
         teamList.sort(Comparator.comparing(Team::getPunteggio).reversed());
         StringBuilder classificaStr = new StringBuilder("Classifica:\n");
         for (int i = 0; i < teamList.size(); i++) {
@@ -160,9 +157,10 @@ public class Hackathon {
         return classificaStr.toString();
     }
 
+    // metodo che verifica l'esistenza di un team (tramite in nome) in un Hackathon. True se lo trova, false altrimenti
     public boolean esisteTeam(String nomeTeam) {
         return this.teamList.stream()
-                .anyMatch(team -> team.getNome().equalsIgnoreCase(nomeTeam)); // Controllo case-insensitive
+                .anyMatch(team -> team.getNome().equalsIgnoreCase(nomeTeam)); // ignora le lettere maiuscole
     }
 
     // metodo che cerca e restituisce un team, se viene trovato nella teamList, mediante nome del team
@@ -193,11 +191,13 @@ public class Hackathon {
         giudiceList.add(giudice);
     }
 
+    // metodo per verificare se un Hackathon è terminato
     public boolean isTerminato() {
         Date now = new Date();
         return dataFine != null && now.after(dataFine);
     }
 
+    // metodo per verificare se il periodo di iscrizioni a un Hackathon è terminato
     public boolean iscrizioniTerminate() {
         Date now = new Date();
         return fineIscrizioni != null && now.before(fineIscrizioni);

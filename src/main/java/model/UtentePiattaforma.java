@@ -23,6 +23,7 @@ public class UtentePiattaforma {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
+    // metodo per visualizzare la classifica di un determinato Hackathon
     public void visualizzaClassifica(Hackathon hackathon) {
         // verifica che l'Hackathon esista
         if (hackathon == null) {

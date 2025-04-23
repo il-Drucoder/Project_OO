@@ -6,6 +6,7 @@ import java.util.List;
 public class Giudice extends UtentePiattaforma {
     // rappresentazione relazioni
     private final List<Hackathon> hackathonAssegnati = new ArrayList<>();
+    private final List<Voto> votiAsseganti = new ArrayList<>(); // lista di voti assegnati
     private final List<Documento> documentiValutati = new ArrayList<>();
     private final List<Organizzatore> organizzatoriInvitanti = new ArrayList<>();
     private final List<Team> teamGiudicati = new ArrayList<>();
@@ -39,6 +40,16 @@ public class Giudice extends UtentePiattaforma {
         hackathonAssegnati.add(hackathon); // aggiunta del nuovo Hackathon alla lista hackathonAssegnati
     }
 
+    // getter per la lista di voti assegnati ai team
+    public List<Voto> getVotiAsseganti() { return votiAsseganti; }
+    // metodo per assegnare un voto a un team
+    public void assegnaVoto(Team team, int voto) {
+        if (voto < 0 || voto > 10) {
+            throw new IllegalArgumentException("Voto non valido!");
+        }
+        team.aggiungiVoto(voto);
+    }
+
     // getter per la lista di documenti valutati
     public List<Documento> getDocumentiValutati() { return documentiValutati; }
     // metodo per aggiungere un documento alla lista DocumentiValutati del giudice
@@ -51,6 +62,7 @@ public class Giudice extends UtentePiattaforma {
 
     // getter per la lista di organizzatori invitanti
     public List<Organizzatore> getOrganizzatoriInvitanti() { return organizzatoriInvitanti; }
+    // metodo per aggiungere un organizzatore alla lista OrganizzatoriInvitanti del giudice
     public void aggiungiOrganizzatoriInvitanti(Organizzatore organizzatore) {
         if (organizzatore == null) {
             throw new IllegalArgumentException("Organizzatore non valido!");
@@ -65,10 +77,4 @@ public class Giudice extends UtentePiattaforma {
         teamGiudicati.add(team);
     }
 
-    public void assegnaVoto(Team team, int voto) {
-        if (voto < 0 || voto > 10) {
-            throw new IllegalArgumentException("Voto non valido!");
-        }
-        team.aggiungiVoto(voto);
-    }
 }

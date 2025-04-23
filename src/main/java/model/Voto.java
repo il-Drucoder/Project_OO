@@ -1,7 +1,14 @@
 package model;
 
 public class Voto {
+    // attributi
     private int valore;
+
+    // metodi
+    // Costruttore
+    public Voto(int valore) {
+        this.valore = valore;
+    }
 
     public int getValore() { return valore; }
     public void setValore(int valore) {

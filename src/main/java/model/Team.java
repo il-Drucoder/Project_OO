@@ -33,7 +33,13 @@ public class Team {
         this.nome = nome;
     }
 
-    private String getPw() { return pw; }
+    // setter con controllo del creatore
+    public String getPw(Concorrente creatore) {
+        if (!this.creatore.equals(creatore)) {
+            throw new SecurityException("Accesso negato!");
+        }
+        return pw;
+    }
     // setter con controllo del creatore
     public void setPw(Concorrente creatore, String pw) {
         if (!this.creatore.equals(creatore)) {
@@ -52,8 +58,7 @@ public class Team {
         if (valore < 0 || valore > 10) {
             throw new IllegalArgumentException("Voto non valido!");
         }
-        Voto voto = new Voto();
-        voto.setValore(valore);
+        Voto voto = new Voto(valore);
         voti.add(voto);
     }
 

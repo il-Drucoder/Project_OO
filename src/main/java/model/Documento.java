@@ -16,12 +16,15 @@ public class Documento {
     }
 
     public Date getDataAggiornamento() { return dataAggiornamento; }
+    // setter privato utilizzabile solo tramite il metodo setFile
+    private void setDataAggiornamento(Date dataAggiornamento) {
+        this.dataAggiornamento = dataAggiornamento;
+    }
 
     public File getFile() { return file; }
-
     // setFile fa automaticamente un setDataAggiornamento
     public void setFile(File file) {
         this.file = file;
-        this.dataAggiornamento = new Date(); // aggiorna alla data corrente
+        this.setDataAggiornamento(new Date()); // aggiorna alla data corrente
     }
 }
