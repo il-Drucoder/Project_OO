@@ -48,17 +48,17 @@ public class Team {
         this.pw = pw;
     }
 
+    public Hackathon getHackathon() { return hackathon; }
+
     public Concorrente getCreatore() { return creatore; }
 
     // getter per la lista di voti assegnati al team
     public List<Voto> getVoti() { return voti; }
     // aggiungi un voto al team
-    public void aggiungiVoto(int valore) {
-        // verifica che il voto sia compreso tra 0 e 10
-        if (valore < 0 || valore > 10) {
-            throw new IllegalArgumentException("Voto non valido!");
+    public void aggiungiVoto(Giudice giudice, Voto voto) {
+        if(giudice == null) {
+            throw new SecurityException("Accesso negato!");
         }
-        Voto voto = new Voto(valore);
         voti.add(voto);
     }
 
@@ -76,7 +76,7 @@ public class Team {
     // override del metodo toString della classe Object, per rappresentare l'oggetto Team come stringa contenente nome e punteggio
     @Override
     public String toString() {
-        return String.format("Team: %s (Punteggio: %.1f)", this.nome, this.getPunteggio());
+        return "Team: %s (Punteggio: %.1f)" + this.nome + this.getPunteggio();
     }
 
     // getter per la lista di membri partecipanti al team

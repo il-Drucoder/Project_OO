@@ -35,6 +35,9 @@ public class Concorrente extends UtentePiattaforma {
         // aggiunge il team alla lista teamAppartenenza del concorrente
         teamAppartenenza.add(team);
 
+        // aggiunto il concorrente al team
+        team.aggiungiMembro(this);
+
         System.out.println("Team '" + nome + "' creato con successo!");
         return team;
     }

@@ -5,11 +5,11 @@ import java.util.List;
 
 public class Giudice extends UtentePiattaforma {
     // rappresentazione relazioni
-    private final List<Hackathon> hackathonAssegnati = new ArrayList<>();
+    private final List<Hackathon> hackathonAssegnati = new ArrayList<>(); // lista di Hackathon supervisionati dal giudice
     private final List<Voto> votiAsseganti = new ArrayList<>(); // lista di voti assegnati
-    private final List<Documento> documentiValutati = new ArrayList<>();
-    private final List<Organizzatore> organizzatoriInvitanti = new ArrayList<>();
-    private final List<Team> teamGiudicati = new ArrayList<>();
+    private final List<Documento> documentiValutati = new ArrayList<>(); // lista di documenti giudicabili
+    private final List<Organizzatore> organizzatoriInvitanti = new ArrayList<>(); // lista di organizzatori da cui si è stati invitati
+    private final List<Team> teamGiudicati = new ArrayList<>(); // lista dei team valutabili
 
     // metodi
     // Costruttore
@@ -43,11 +43,21 @@ public class Giudice extends UtentePiattaforma {
     // getter per la lista di voti assegnati ai team
     public List<Voto> getVotiAsseganti() { return votiAsseganti; }
     // metodo per assegnare un voto a un team
-    public void assegnaVoto(Team team, int voto) {
-        if (voto < 0 || voto > 10) {
+    public void assegnaVoto(Team team, int valore) {
+        // verica che il valore da assegnare come voto sia compreso tra 0 e 10
+        if (valore < 0 || valore > 10) {
             throw new IllegalArgumentException("Voto non valido!");
         }
-        team.aggiungiVoto(voto);
+
+        // verifica che il giudice sia abilitato a valutare un team in un determinato Hackathon
+        // verifica che team è in teamGiudicati e che team.getHackathon() è in hackathonGiudicati
+        if(!(teamGiudicati.contains(team) || hackathonAssegnati.contains(team.getHackathon()))) {
+            throw new SecurityException("Il giudice selezionato non ha il permesso di giudicare questo team!");
+        }
+
+        Voto voto = new Voto(this, team, valore);
+        votiAsseganti.add(voto);
+        team.aggiungiVoto(this, voto);
     }
 
     // getter per la lista di documenti valutati
@@ -76,5 +86,4 @@ public class Giudice extends UtentePiattaforma {
     public void aggiungiTeam(Team team) {
         teamGiudicati.add(team);
     }
-
 }

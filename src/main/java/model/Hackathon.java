@@ -142,7 +142,7 @@ public class Hackathon {
     }
 
     // metodo utilizzato per il calcolo della classifica di un hackathon
-    private String calcolaClassifica() {
+    private String calcolaClassifica() throws IllegalStateException {
         // verifica che l'Hackathon sia concluso
         if(!isTerminato()) {
             throw new IllegalStateException("L'Hackathon è ancora in corso. Impossibile calcolare la classifica!");
@@ -191,16 +191,26 @@ public class Hackathon {
         giudiceList.add(giudice);
     }
 
+    // metodo per calcolo del numero totale di concorrenti attualmente iscritti
+    public int contaPartecipanti() {
+        int contatore = 0;
+        for (Team team : teamList) {
+             contatore += team.getMembri().size();
+        }
+        return contatore;
+    }
+
     // metodo per verificare se un Hackathon è terminato
     public boolean isTerminato() {
         Date now = new Date();
         return dataFine != null && now.after(dataFine);
     }
 
-    // metodo per verificare se il periodo di iscrizioni a un Hackathon è terminato
     public boolean iscrizioniTerminate() {
         Date now = new Date();
-        return fineIscrizioni != null && now.before(fineIscrizioni);
+
+        // Controlla che non sia scaduta la data e che non sia stato raggiunto il limite massimo di iscritti
+        return fineIscrizioni != null && now.before(fineIscrizioni) && this.contaPartecipanti() < numMaxIscritti;
     }
 
     // getter per la lista di giudici che supervisionano l'Hackathon
