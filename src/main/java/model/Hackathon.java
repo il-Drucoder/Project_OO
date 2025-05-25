@@ -217,4 +217,8 @@ public class Hackathon {
     public List<Giudice> getGiudiceList() {
         return new ArrayList<>(giudiceList); // restituisce una copia per sicurezza
     }
+
+    public List<Team> getTeamList() {
+        return new ArrayList<>(teamList);
+    }
 }

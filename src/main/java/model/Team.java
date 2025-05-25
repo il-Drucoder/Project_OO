@@ -98,4 +98,9 @@ public class Team {
 
     // getter per la lista di documenti creati dal team
     public List<Documento> getDocumenti() { return documenti; }
+
+    // metodo per aggiungere un documento alla lista documenti di un team
+    public void aggiungiDocumento(Documento documento) {
+        this.documenti.add(documento);
+    }
 }

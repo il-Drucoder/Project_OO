@@ -6,14 +6,14 @@ public class Main {
         // ------------------------------
         // 1. INIZIALIZZAZIONE UTENTI
         // ------------------------------
-        Organizzatore organizzatore1 = new Organizzatore("Luca", "Bianchi", "luca.bianchi@hackathon.org");
-        Organizzatore organizzatore2 = new Organizzatore("Marco", "Verdi", "francesco.verdi@hackathon.org");
+        Organizzatore organizzatore1 = new Organizzatore("Luca", "Bianchi", "luca.bianchi@organizzatore.com");
+        Organizzatore organizzatore2 = new Organizzatore("Marco", "Verdi", "francesco.verdi@organizzatore.com");
 
         Giudice giudice1 = new Giudice("Anna", "Rossi", "anna.rossi@giudice.com");
 
-        Concorrente concorrente1 = new Concorrente("Maria", "Gialli", "maria.gialli@studente.it");
-        Concorrente concorrente2 = new Concorrente("Fabrizio", "Neri", "fabrizio.neri@studente.it");
-        Concorrente concorrente3 = new Concorrente("Federico", "Neri", "federico.neri@studente.it");
+        Concorrente concorrente1 = new Concorrente("Maria", "Gialli", "maria.gialli@concorrente.com");
+        Concorrente concorrente2 = new Concorrente("Fabrizio", "Neri", "fabrizio.neri@concorrente.com");
+        Concorrente concorrente3 = new Concorrente("Federico", "Neri", "federico.neri@concorrente.com");
 
         // ------------------------------
         // 2. CREAZIONE HACKATHON (MEDIANTE SOLO ORGANIZZATORE)
