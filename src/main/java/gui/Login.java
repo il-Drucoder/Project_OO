@@ -34,7 +34,7 @@ public class Login {
                     } else {
                         String emailUtentePiattaforma = utentePiattaforma.getEmail();
 
-                        if(textField1.getText().toLowerCase().contains("@c")) { //concorrente.com
+                        if(textField1.getText().toLowerCase().contains("@concorrente.com")) {
                             BenvenutoConcorrente BenvenutoConcorrenteGUI = new BenvenutoConcorrente(frame,emailUtentePiattaforma,controller);
                             frame.setVisible(false);
                         } else if(textField1.getText().toLowerCase().contains("@giudice.com")) {
