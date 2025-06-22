@@ -1,56 +1,52 @@
 package gui;
 
 import controller.Controller;
-import model.Team;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
 public class AggiungiDocumento extends JFrame {
+    public JFrame frame;
     private JPanel panel1;
     private JTextField filePathField;
     private JButton browseButton;
     private JButton vButton;
     private JButton xButton;
-    private JButton uploadButton;
     private File selectedFile;
-    public JFrame frame;
 
-    public AggiungiDocumento(JFrame frameChiamante, Team team, Controller controller) {
+    public AggiungiDocumento(JFrame frameChiamante, String nomeTeam, String titoloHackathon, Controller controller) {
         frame = new JFrame("Aggiunta documento");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
-        // Campo testo per il path del file
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                frameChiamante.setVisible(true);
+                frame.dispose();
+            }
+        });
+
+        // campo testo per il path del file
         filePathField.setEditable(false);
-
-        // Pulsante "Sfoglia"
+        // pulsante "Sfoglia"
         browseButton.addActionListener(e -> chooseFile());
-
-        // Pulsante "Carica"
+        // pulsante "Carica"
         vButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (selectedFile != null) {
-                    controller.aggiungiDocumentoInTeam(controller.setFileInDocumenti(selectedFile),team);
-                    PaginaSuccesso PaginaSuccessoGUI = new PaginaSuccesso(frame,"File " + selectedFile.getName() + " aggiunto ",controller);
-                    frame.setVisible(false);
-                } else {
-                    PaginaFallimento PaginaFallimentoGUI = new PaginaFallimento(frame,"Operazione inserimento file",controller);
-                }
+                controller.metodoAggiungiDocumento(frame, selectedFile, nomeTeam, titoloHackathon);
             }
         });
 
         xButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AggiungiDocumento AggiungiDocumentoGUI = new AggiungiDocumento(frame,team,controller);
-                frame.setVisible(false);
+                filePathField.setText("");
             }
         });
     }

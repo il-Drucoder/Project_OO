@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 public class Home {
     private JPanel mainPanel;
     private JPanel panel1;
@@ -22,9 +21,8 @@ public class Home {
         frameHome.setContentPane(new Home().panel1);
         frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameHome.pack();
-        frameHome.setVisible(true);
 
-       controller = new Controller();
+        controller = new Controller();
     }
 
     public Home() {
@@ -33,7 +31,7 @@ public class Home {
         Login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Login LoginGUI = new Login(frameHome,controller);
+                Login LoginGUI = new Login(frameHome, controller);
                 frameHome.setVisible(false);
             }
         });
@@ -41,7 +39,7 @@ public class Home {
         SignUp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Signup SignupGUI = new Signup(frameHome,controller);
+                Signup SignupGUI = new Signup(frameHome, controller);
                 frameHome.setVisible(false);
             }
         });

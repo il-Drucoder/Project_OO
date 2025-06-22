@@ -1,33 +1,39 @@
 package gui;
 
 import controller.Controller;
-import model.Hackathon;
-import model.UtentePiattaforma;
 
 import javax.swing.*;
 
 public class ClassificaHackathon {
-    private JPanel panel1;
-    private JLabel classifica;
-    private JLabel nomeHackathon;
     public JFrame frame;
+    private JPanel panel1;
+    private JLabel labelTitoloClassifica;
+    private JLabel labelClassifica;
 
     public ClassificaHackathon(JFrame frameChiamante, String titoloHackathon, String emailUtente, Controller controller) {
         frame = new JFrame("Classifica Hackathon");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
-        UtentePiattaforma utentePiattaforma = controller.getUtentePiattaformaByEmail(emailUtente);
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                frameChiamante.setVisible(true);
+                frame.dispose();
+            }
+        });
 
-        if(utentePiattaforma == null) {
-            PaginaFallimento PaginaFallimentoGUI = new PaginaFallimento(frame,"Utente non registrato. Operazione richiesta",controller);
-            frame.setVisible(false);
+        if (controller.existUtentePiattaforma(emailUtente)) {
+            labelTitoloClassifica.setText("Classifica Hackathon '" + titoloHackathon + "'");
+            labelClassifica.setText(controller.getHackathonByTitolo(titoloHackathon).getClassifica(controller.getUtentePiattaformaByEmail(emailUtente)));
         } else {
-            Hackathon hackathon = controller.getHackathonByName(titoloHackathon);
-            nomeHackathon.setText("Classifica Hackathon '" + hackathon.getTitolo() + "'");
-            classifica.setText(hackathon.getClassifica(utentePiattaforma));
+            JOptionPane.showMessageDialog(frame,
+                    "Utente non registrato",
+                    "Warning page",
+                    JOptionPane.WARNING_MESSAGE);
+            frame.setVisible(false);
         }
     }
 }

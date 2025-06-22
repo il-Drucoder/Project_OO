@@ -1,4 +1,4 @@
-import java.util.Date;
+import java.time.LocalDate;
 import model.*;
 
 public class Main {
@@ -6,14 +6,14 @@ public class Main {
         // ------------------------------
         // 1. INIZIALIZZAZIONE UTENTI
         // ------------------------------
-        Organizzatore organizzatore1 = new Organizzatore("Luca", "Bianchi", "luca.bianchi@organizzatore.com");
-        Organizzatore organizzatore2 = new Organizzatore("Marco", "Verdi", "francesco.verdi@organizzatore.com");
+        Organizzatore organizzatore1 = new Organizzatore("Luca", "Bianchi", "luca.bianchi@organizzatore.com", "luccariello2!");
+        Organizzatore organizzatore2 = new Organizzatore("Marco", "Verdi", "francesco.verdi@organizzatore.com", "verdi.7");
 
-        Giudice giudice1 = new Giudice("Anna", "Rossi", "anna.rossi@giudice.com");
+        Giudice giudice1 = new Giudice("Anna", "Rossi", "anna.rossi@giudice.com", "RossiPopi2");
 
-        Concorrente concorrente1 = new Concorrente("Maria", "Gialli", "maria.gialli@concorrente.com");
-        Concorrente concorrente2 = new Concorrente("Fabrizio", "Neri", "fabrizio.neri@concorrente.com");
-        Concorrente concorrente3 = new Concorrente("Federico", "Neri", "federico.neri@concorrente.com");
+        Concorrente concorrente1 = new Concorrente("Maria", "Gialli", "maria.gialli@concorrente.com", "Yellow3");
+        Concorrente concorrente2 = new Concorrente("Fabrizio", "Neri", "fabrizio.neri@concorrente.com", "Sui88");
+        Concorrente concorrente3 = new Concorrente("Federico", "Neri", "federico.neri@concorrente.com", "password123");
 
         // ------------------------------
         // 2. CREAZIONE HACKATHON (MEDIANTE SOLO ORGANIZZATORE)
@@ -23,11 +23,11 @@ public class Main {
                 "Offline First 2025",
                 1000, // numero massimo iscritti
                 5, // numero massimo concorrenti di un team
-                new Date(), // data inizio iscrizioni (oggi)
-                new Date(System.currentTimeMillis() + 86400000), // +1 giorno per le iscrizioni
-                new Date(System.currentTimeMillis() + 86400000 * 6), // +6 giorni per la data fine
+                LocalDate.now(), // data inizio iscrizioni (oggi)
+                LocalDate.now().plusDays(1), // +1 giorno per le iscrizioni
+                LocalDate.now().plusDays(6), // +6 giorni per la data fine
                 "Progettare strumenti digitali che funzionino perfettamente senza internet: utili, giochi, o servizi che si sincronizzano solo quando serve.", // descrizione problema
-                "Via Mezzocannone 10, Napoli" // inidirizzo sede svolgimento Hackathon
+                "Via Mezzocannone 10, Napoli" // indirizzo sede svolgimento Hackathon
         );
         System.out.println("Hackathon creato: " + hackathon1.getTitolo());
 

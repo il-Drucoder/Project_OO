@@ -32,7 +32,7 @@
           <text value="Partecipazione al team"/>
         </properties>
       </component>
-      <component id="45497" class="javax.swing.JPasswordField" binding="passwordField1" default-binding="true">
+      <component id="45497" class="javax.swing.JPasswordField" binding="fieldPasswordTeam" default-binding="true">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -74,7 +74,7 @@
           <text value="Password:"/>
         </properties>
       </component>
-      <component id="323f1" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+      <component id="323f1" class="javax.swing.JComboBox" binding="comboBoxTeam" default-binding="true">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -82,7 +82,7 @@
           <model/>
         </properties>
       </component>
-      <component id="32b59" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+      <component id="32b59" class="javax.swing.JComboBox" binding="comboBoxHackathon">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

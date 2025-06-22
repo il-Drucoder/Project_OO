@@ -1,16 +1,18 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class Hackathon {
     // attributi
     private String titolo;
-    private Date dataInizio;
-    private Date dataFine;
+    private LocalDate dataInizio;
+    private LocalDate dataFine;
     private int numMaxIscritti;
+    private int numIscritti;
     private int dimMaxTeam;
-    private Date inizioIscrizioni;
-    private Date fineIscrizioni;
+    private LocalDate inizioIscrizioni;
+    private LocalDate fineIscrizioni;
     private String descrizioneProblema;
     private String classifica;
     private String indirizzoSede;
@@ -22,15 +24,16 @@ public class Hackathon {
 
     // metodi
     // Costruttore (solo l'organizzatore può creare un Hackathon)
-    public Hackathon(Organizzatore creatore, String titolo, int numMaxIscritti, int dimMaxTeam, Date inizioIscrizioni, Date fineIscrizioni, Date dataFine, String descrizioneProblema, String indirizzoSede) {
+    public Hackathon(Organizzatore creatore, String titolo, int numMaxIscritti, int dimMaxTeam, LocalDate inizioIscrizioni, LocalDate dataInizio, LocalDate dataFine, String descrizioneProblema, String indirizzoSede) {
         if (creatore == null) throw new IllegalArgumentException("Creatore mancante!");
         this.creatore = creatore;
         this.titolo = titolo;
         this.numMaxIscritti = numMaxIscritti;
+        this.numIscritti = 0;
         this.dimMaxTeam = dimMaxTeam;
         this.inizioIscrizioni = inizioIscrizioni;
-        this.fineIscrizioni = fineIscrizioni;
-        this.dataInizio = new Date(fineIscrizioni.getTime() + 86400000 * 2); // l'inizio avviene 2 giorni dopo la fine delle iscrizioni
+        this.fineIscrizioni = dataInizio.minusDays(2); // le iscrizioni chiudono 2 giorni prima l'inizio della gara
+        this.dataInizio = dataInizio;
         this.dataFine = dataFine;
         this.descrizioneProblema = descrizioneProblema;
         this.classifica = null;
@@ -46,18 +49,18 @@ public class Hackathon {
         this.titolo = titolo;
     }
 
-    public Date getDataInizio() { return dataInizio; }
+    public LocalDate getDataInizio() { return dataInizio; }
     // setter con controllo del creatore
-    public void setDataInizio(Organizzatore creatore, Date dataInizio) {
+    public void setDataInizio(Organizzatore creatore, LocalDate dataInizio) {
         if (!this.creatore.equals(creatore)) {
             throw new SecurityException("Accesso negato!");
         }
         this.dataInizio = dataInizio;
     }
 
-    public Date getDataFine() { return dataFine; }
+    public LocalDate getDataFine() { return dataFine; }
     // setter con controllo del creatore
-    public void setDataFine(Organizzatore creatore, Date dataFine) {
+    public void setDataFine(Organizzatore creatore, LocalDate dataFine) {
         if (!this.creatore.equals(creatore)) {
             throw new SecurityException("Accesso negato!");
         }
@@ -73,6 +76,18 @@ public class Hackathon {
         this.numMaxIscritti = numMaxIscritti;
     }
 
+    public int getNumIscritti() { return numIscritti; }
+    // metodo che aggiunge un iscritto (invocato nel metodo creaTeam e partecipaTeam in concorrente), con controllo del team
+    public void addIscritto(Team team) {
+        for (Team t : this.teamList) {
+            if (t.equals(team)) {
+                this.numIscritti ++;
+                return;
+            }
+        }
+        throw new SecurityException("Accesso negato!");
+    }
+
     public int getDimMaxTeam() { return dimMaxTeam; }
     // setter con controllo del creatore
     public void setDimMaxTeam(Organizzatore creatore, int dimMaxTeam) {
@@ -82,18 +97,18 @@ public class Hackathon {
         this.dimMaxTeam = dimMaxTeam;
     }
 
-    public Date getInizioIscrizioni() { return inizioIscrizioni; }
+    public LocalDate getInizioIscrizioni() { return inizioIscrizioni; }
     // setter con controllo del creatore
-    public void setInizioIscrizioni(Organizzatore creatore, Date inizioIscrizioni) {
+    public void setInizioIscrizioni(Organizzatore creatore, LocalDate inizioIscrizioni) {
         if (!this.creatore.equals(creatore)) {
             throw new SecurityException("Accesso negato!");
         }
         this.inizioIscrizioni = inizioIscrizioni;
     }
 
-    public Date getFineIscrizioni() { return fineIscrizioni; }
+    public LocalDate getFineIscrizioni() { return fineIscrizioni; }
     // setter con controllo del creatore
-    public void setFineIscrizioni(Organizzatore creatore, Date fineIscrizioni) {
+    public void setFineIscrizioni(Organizzatore creatore, LocalDate fineIscrizioni) {
         if (!this.creatore.equals(creatore)) {
             throw new SecurityException("Accesso negato!");
         }
@@ -164,7 +179,7 @@ public class Hackathon {
     }
 
     // metodo che cerca e restituisce un team, se viene trovato nella teamList, mediante nome del team
-    public Team getTeamPerNome(String nomeTeam) {
+    public Team getTeamByNome(String nomeTeam) {
         for (Team team : teamList) {
             if (team.getNome().equalsIgnoreCase(nomeTeam)) {
                 return team;
@@ -191,26 +206,19 @@ public class Hackathon {
         giudiceList.add(giudice);
     }
 
-    // metodo per calcolo del numero totale di concorrenti attualmente iscritti
-    public int contaPartecipanti() {
-        int contatore = 0;
-        for (Team team : teamList) {
-             contatore += team.getMembri().size();
-        }
-        return contatore;
-    }
-
     // metodo per verificare se un Hackathon è terminato
     public boolean isTerminato() {
-        Date now = new Date();
-        return dataFine != null && now.after(dataFine);
+        LocalDate today = LocalDate.now();
+        return dataFine != null && today.isAfter(dataFine);
     }
 
     public boolean iscrizioniTerminate() {
-        Date now = new Date();
+        LocalDate today = LocalDate.now();
+        return today.isAfter(fineIscrizioni);
+    }
 
-        // Controlla che non sia scaduta la data e che non sia stato raggiunto il limite massimo di iscritti
-        return fineIscrizioni != null && now.before(fineIscrizioni) && this.contaPartecipanti() < numMaxIscritti;
+    public boolean isCompleto() {
+        return numMaxIscritti == numIscritti;
     }
 
     // getter per la lista di giudici che supervisionano l'Hackathon

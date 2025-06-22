@@ -5,13 +5,15 @@ public class UtentePiattaforma {
     protected String nome;
     protected String cognome;
     protected String email;
+    protected String pw;
 
     // metodi
     // Costruttore che imposta automaticamente isRegistrato a true e imposta automaticamente l'id
-    public UtentePiattaforma(String nome, String cognome, String email) {
+    public UtentePiattaforma(String nome, String cognome, String email, String pw) {
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
+        this.pw = pw;
     }
 
     public String getNome() { return nome; }
@@ -32,5 +34,10 @@ public class UtentePiattaforma {
         }
         System.out.println("=== Classifica di " + hackathon.getTitolo() + " ===");
         System.out.println(hackathon.getClassifica(this));
+    }
+
+    // metodo per verificare la password senza esportarla
+    public boolean verificaPassword(String passwordInserita) {
+        return this.pw.equals(passwordInserita);
     }
 }

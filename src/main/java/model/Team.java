@@ -85,7 +85,7 @@ public class Team {
     // metodo per aggiungere un nuovo concorrente al team
     public void aggiungiMembro(Concorrente concorrente) {
         // verifica che il team non sia al completo
-        if (membri.size() == hackathon.getDimMaxTeam()) {
+        if (isCompleto()) {
             throw new IllegalStateException("Team al completo!");
         }
         membri.add(concorrente);
@@ -101,6 +101,15 @@ public class Team {
 
     // metodo per aggiungere un documento alla lista documenti di un team
     public void aggiungiDocumento(Documento documento) {
+        for (Documento d : getDocumenti()) {
+            if (documento.equals(d)) {
+                throw new IllegalArgumentException("Il documento selezionato è già stato caricato");
+            }
+        }
         this.documenti.add(documento);
+    }
+
+    public boolean isCompleto() {
+        return (membri.size() == hackathon.getDimMaxTeam());
     }
 }

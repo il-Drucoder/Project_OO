@@ -1,46 +1,58 @@
 package gui;
 
 import controller.Controller;
-import model.Team;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PaginaTeam {
-    private JPanel panel1;
-    private JLabel nomeTeam;
-    private JLabel punteggioTeam;
-    private JLabel capogruppoTeam;
-    private JButton visualizzaDocumentiButton;
-    private JButton aggiungiDocumentoButton;
-    private JLabel hackathonApparteneza;
     public JFrame frame;
+    private JPanel panel1;
+    private JLabel labelNomeTeam;
+    private JLabel labelPunteggioTeam;
+    private JLabel labelCapogruppoTeam;
+    private JLabel labelMembri;
+    private JLabel labelHackathonAppartenenza;
+    private JLabel labelStatoGara;
+    private JButton buttonAggiungiDocumento;
+    private JButton buttonVisualizzaDocumenti;
 
-    PaginaTeam(JFrame frameChiamante, Team team, Controller controller) {
+    public PaginaTeam(JFrame frameChiamante, String nomeTeam, String titoloHackathon, Controller controller) {
         frame = new JFrame("Team");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
-        nomeTeam.setText("Nome: "+ team.getNome());
-        punteggioTeam.setText("Punteggio: "+ team.getPunteggio());
-        capogruppoTeam.setText("Capogruppo: " + team.getCreatore().getNome() + " " + team.getCreatore().getCognome());
-        hackathonApparteneza.setText("Hackathon Appartenza: " + team.getHackathon().getTitolo());
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                frameChiamante.setVisible(true);
+                frame.dispose();
+            }
+        });
 
-        visualizzaDocumentiButton.addActionListener(new ActionListener() {
+        labelNomeTeam.setText("Nome: "+ controller.getTeamByNome(nomeTeam).getNome());
+        labelPunteggioTeam.setText("Punteggio: "+ controller.getTeamByNome(nomeTeam).getPunteggio());
+        labelCapogruppoTeam.setText("Capogruppo: " + controller.getTeamByNome(nomeTeam).getCreatore().getNome() + " " + controller.getTeamByNome(nomeTeam).getCreatore().getCognome());
+        labelMembri.setText("Membri: " + controller.getListaMembriByTeam(controller.getTeamByNome(nomeTeam)));
+        labelHackathonAppartenenza.setText("Hackathon appartenenza: " + controller.getTeamByNome(nomeTeam).getHackathon().getTitolo());
+        boolean statoGara = controller.getHackathonByTitolo(titoloHackathon).isTerminato();
+        labelStatoGara.setText("Stato gara: " + (statoGara ? "terminata" : "in corso"));
+
+        buttonVisualizzaDocumenti.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VisualizzaDocumenti VisualizzaDocumentiGUI = new VisualizzaDocumenti(frame,team,controller);
+                VisualizzaDocumenti VisualizzaDocumentiGUI = new VisualizzaDocumenti(frame, nomeTeam, titoloHackathon, controller);
                 frame.setVisible(false);
             }
         });
 
-        aggiungiDocumentoButton.addActionListener(new ActionListener() {
+        buttonAggiungiDocumento.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AggiungiDocumento AggiungiDocumentoGUI = new AggiungiDocumento(frame,team,controller);
+                AggiungiDocumento AggiungiDocumentoGUI = new AggiungiDocumento(frame, nomeTeam, titoloHackathon, controller);
                 frame.setVisible(false);
             }
         });

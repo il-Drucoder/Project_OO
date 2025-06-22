@@ -13,8 +13,8 @@ public class Giudice extends UtentePiattaforma {
 
     // metodi
     // Costruttore
-    public Giudice(String nome, String cognome, String email) {
-        super(nome, cognome, email); // chiama il costruttore padre
+    public Giudice(String nome, String cognome, String email, String password) {
+        super(nome, cognome, email, password); // chiama il costruttore padre
     }
 
     // getter per la lista di hackathon assegnati

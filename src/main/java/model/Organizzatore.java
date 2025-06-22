@@ -1,6 +1,6 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,20 +10,20 @@ public class Organizzatore extends UtentePiattaforma {
     private final List<Giudice> giudiciConvocati = new ArrayList<>();
 
     // Costruttore
-    public Organizzatore(String nome, String cognome, String email) {
-        super(nome, cognome, email); // chiama il costruttore padre
+    public Organizzatore(String nome, String cognome, String email, String password) {
+        super(nome, cognome, email, password); // chiama il costruttore padre
     }
 
     // getter per la lista di hackathon creati
     public List<Hackathon> getHackathonCreati() { return hackathonCreati; }
     // metodo per la creazione di un nuovo Hackathon da parte di un organizzatore
-    public Hackathon creaHackathon(String titolo, int numMaxIscritti, int dimMaxTeam, Date inizioIscrizioni, Date fineIscrizioni, Date dataFine, String descrizioneProblema, String indirizzoSede) {
+    public Hackathon creaHackathon(String titolo, int numMaxIscritti, int dimMaxTeam, LocalDate inizioIscrizioni, LocalDate fineIscrizioni, LocalDate dataFine, String descrizioneProblema, String indirizzoSede) {
         // verifica che la data di fine iscrizioni venga dopo la data di inizio iscrizioni
-        if (fineIscrizioni.before(inizioIscrizioni)) {
+        if (fineIscrizioni.isBefore(inizioIscrizioni)) {
             throw new IllegalArgumentException("Errore: date non valide");
         }
         // verifica che la data di fine Hackathon venga almeno dopo due giorni dalla data di fine iscrizioni
-        if (dataFine.before(new Date(fineIscrizioni.getTime() + 86400000 * 2))) {
+        if (dataFine.isBefore(fineIscrizioni.plusDays(2))) {
             throw new IllegalArgumentException("Errore: date non valide");
         }
         Hackathon hackathon = new Hackathon(this, titolo, numMaxIscritti, dimMaxTeam, inizioIscrizioni, fineIscrizioni, dataFine, descrizioneProblema, indirizzoSede);  // Passa l'organizzatore come creatore

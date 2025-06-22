@@ -1,59 +1,63 @@
 package gui;
 
 import controller.Controller;
-import model.Team;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CreaTeam {
-    private JPanel panel1;
     public JFrame frame;
+    private JPanel panel1;
     private JLabel label1;
-    private JLabel nome;
-    private JComboBox comboBox1;
-    private JTextField textField1;
+    private JLabel label2;
+    private JLabel label3;
+    private JLabel label4;
+    private JComboBox comboBoxTitoloHackathon;
+    private JTextField fieldNomeTeam;
     private JButton vButton;
     private JButton xButton;
-    private JPasswordField passwordField1;
-    private JButton OKButton;
+    private JPasswordField fieldPasswordTeam;
 
-    public CreaTeam(JFrame frameChiamante, String concorrente, Controller controller) {
+    public CreaTeam(JFrame frameChiamante, String emailConcorrente, Controller controller) {
         frame = new JFrame("Crea Team");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                frameChiamante.setVisible(true);
+                frame.dispose();
+            }
+        });
 
         // Primo comboBox Hackathon con default
         List<String> hackathonList = new ArrayList<>();
         hackathonList.add("Seleziona");
-        hackathonList.addAll(controller.getNomeHackathon());
-        comboBox1.setModel(new DefaultComboBoxModel<>(hackathonList.toArray(new String[0])));
+        hackathonList.addAll(controller.getListaTitoliHackathonInCorso());
+        comboBoxTitoloHackathon.setModel(new DefaultComboBoxModel<>(hackathonList.toArray(new String[0])));
 
         vButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!(textField1.getText().isEmpty() || passwordField1.getPassword().length == 0 || comboBox1.getSelectedItem().toString().equals("Seleziona"))) {
-                    Team team = new Team(textField1.getText(), passwordField1.getPassword().toString(), controller.getHackathonByName(comboBox1.getSelectedItem().toString()), controller.getConcorrenteByEmail(concorrente));
-                    controller.addTeam(team);
-                    PaginaSuccesso PaginaSuccessoGUI = new PaginaSuccesso(frame,"Creazione Team avvenuta",controller);
-                    frame.setVisible(false);
-                } else {
-                    PaginaFallimento PaginaFallimentoGUI = new PaginaFallimento(frame,"Creazione Team",controller);
-                    frame.setVisible(false);
-                }
+                controller.metodoCreaTeam(frame, fieldNomeTeam.getText(), fieldPasswordTeam.getPassword(), comboBoxTitoloHackathon.getSelectedItem().toString(), emailConcorrente);
+                // sovrascrizione della password (per renderla inaccessibile in modo non autorizzato)
+                Arrays.fill(fieldPasswordTeam.getPassword(), '\0');
             }
         });
 
         xButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CreaTeam CreaTeamGUI = new CreaTeam(frame,concorrente,controller);
-                frame.setVisible(false);
+                comboBoxTitoloHackathon.setSelectedIndex(0);
+                fieldNomeTeam.setText("");
+                fieldPasswordTeam.setText("");
             }
         });
     }
