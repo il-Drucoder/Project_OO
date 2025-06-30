@@ -12,18 +12,14 @@ import java.util.List;
 public class CreaTeam {
     public JFrame frame;
     private JPanel panel1;
-    private JLabel label1;
-    private JLabel label2;
-    private JLabel label3;
-    private JLabel label4;
     private JComboBox comboBoxTitoloHackathon;
     private JTextField fieldNomeTeam;
-    private JButton vButton;
-    private JButton xButton;
     private JPasswordField fieldPasswordTeam;
+    private JButton okButton;
+    private JButton cancelButton;
 
     public CreaTeam(JFrame frameChiamante, String emailConcorrente, Controller controller) {
-        frame = new JFrame("Crea Team");
+        frame = new JFrame("Crea team");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
@@ -37,28 +33,33 @@ public class CreaTeam {
             }
         });
 
-        // Primo comboBox Hackathon con default
+        // comboBox Hackathon con default
         List<String> hackathonList = new ArrayList<>();
         hackathonList.add("Seleziona");
-        hackathonList.addAll(controller.getListaTitoliHackathonInCorso());
+        hackathonList.addAll(controller.getListaTitoliHackathonNonTerminati());
         comboBoxTitoloHackathon.setModel(new DefaultComboBoxModel<>(hackathonList.toArray(new String[0])));
 
-        vButton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.metodoCreaTeam(frame, fieldNomeTeam.getText(), fieldPasswordTeam.getPassword(), comboBoxTitoloHackathon.getSelectedItem().toString(), emailConcorrente);
+                controller.metodoCreaTeam(frame, comboBoxTitoloHackathon.getSelectedItem().toString(), fieldNomeTeam.getText(), fieldPasswordTeam.getPassword(), emailConcorrente);
                 // sovrascrizione della password (per renderla inaccessibile in modo non autorizzato)
                 Arrays.fill(fieldPasswordTeam.getPassword(), '\0');
+                azzeraCampi();
             }
         });
 
-        xButton.addActionListener(new ActionListener() {
+        cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                comboBoxTitoloHackathon.setSelectedIndex(0);
-                fieldNomeTeam.setText("");
-                fieldPasswordTeam.setText("");
+                azzeraCampi();
             }
         });
+    }
+
+    private void azzeraCampi() {
+        comboBoxTitoloHackathon.setSelectedIndex(0);
+        fieldNomeTeam.setText("");
+        fieldPasswordTeam.setText("");
     }
 }

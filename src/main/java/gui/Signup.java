@@ -10,13 +10,12 @@ import java.util.Arrays;
 public class Signup {
     public JFrame frame;
     private JPanel panel1;
-    private JLabel label1;
     private JTextField fieldNome;
     private JTextField fieldCognome;
     private JTextField fieldEmail;
     private JPasswordField fieldPassword;
-    private JButton vButton;
-    private JButton xButton;
+    private JButton okButton;
+    private JButton cancelButton;
 
     public Signup(JFrame frameChiamante, Controller controller) {
         frame= new JFrame("Signup");
@@ -33,23 +32,28 @@ public class Signup {
             }
         });
 
-        vButton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 controller.metodoSignup(frame, fieldNome.getText(), fieldCognome.getText(), fieldEmail.getText(), fieldPassword.getPassword());
-                // sovrascrizione della password (per renderla inaccessibile in modo non autorizzato)
-                Arrays.fill(fieldPassword.getPassword(), '\0');
+                azzeraCampi();
             }
         });
 
-        xButton.addActionListener(new ActionListener() {
+        cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                fieldNome.setText("");
-                fieldCognome.setText("");
-                fieldEmail.setText("");
-                fieldPassword.setText("");
+                azzeraCampi();
             }
         });
+    }
+
+    private void azzeraCampi() {
+        fieldNome.setText("");
+        fieldCognome.setText("");
+        fieldEmail.setText("");
+        fieldPassword.setText("");
+        // sovrascrizione della password (per renderla inaccessibile in modo non autorizzato)
+        Arrays.fill(fieldPassword.getPassword(), '\0');
     }
 }

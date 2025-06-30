@@ -23,10 +23,9 @@ public class Main {
                 "Offline First 2025",
                 1000, // numero massimo iscritti
                 5, // numero massimo concorrenti di un team
-                LocalDate.now(), // data inizio iscrizioni (oggi)
-                LocalDate.now().plusDays(1), // +1 giorno per le iscrizioni
+                LocalDate.now().plusDays(1), // data inizio iscrizioni (domani)
+                LocalDate.now().plusDays(3), // +3 giorno per la data di inizio
                 LocalDate.now().plusDays(6), // +6 giorni per la data fine
-                "Progettare strumenti digitali che funzionino perfettamente senza internet: utili, giochi, o servizi che si sincronizzano solo quando serve.", // descrizione problema
                 "Via Mezzocannone 10, Napoli" // indirizzo sede svolgimento Hackathon
         );
         System.out.println("Hackathon creato: " + hackathon1.getTitolo());
@@ -35,7 +34,7 @@ public class Main {
         // 3. CONVOCAZIONE GIUDICI (MEDIANTE SOLO ORGANIZZATORE)
         // ------------------------------
         System.out.println("\n=== CONVOCAZIONE GIUDICI ===");
-        organizzatore1.convocaGiudice(giudice1, hackathon1);
+        organizzatore1.convocaGiudice(hackathon1, giudice1);
 
         // ------------------------------
         // 4. REGISTRAZIONE TEAM (MEDIANTE SOLO CONCORRENTI)

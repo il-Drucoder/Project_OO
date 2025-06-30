@@ -24,7 +24,7 @@
           <text value="Password:"/>
         </properties>
       </component>
-      <component id="31fae" class="javax.swing.JLabel" binding="label1">
+      <component id="31fae" class="javax.swing.JLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -48,12 +48,12 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="ead74" class="javax.swing.JButton" binding="xButton" default-binding="true">
+          <component id="ead74" class="javax.swing.JButton" binding="cancelButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="X"/>
+              <text value="Cancel"/>
             </properties>
           </component>
           <hspacer id="f4cdb">
@@ -61,12 +61,12 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <component id="9374d" class="javax.swing.JButton" binding="vButton" default-binding="true">
+          <component id="9374d" class="javax.swing.JButton" binding="okButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="V"/>
+              <text value="Ok"/>
             </properties>
           </component>
         </children>

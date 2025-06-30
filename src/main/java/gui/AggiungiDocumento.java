@@ -10,14 +10,14 @@ import java.io.File;
 public class AggiungiDocumento extends JFrame {
     public JFrame frame;
     private JPanel panel1;
-    private JTextField filePathField;
+    private JTextField filePercorsoFile;
     private JButton browseButton;
-    private JButton vButton;
-    private JButton xButton;
-    private File selectedFile;
+    private JButton okButton;
+    private JButton cancelButton;
+    private File fileSelezionato;
 
     public AggiungiDocumento(JFrame frameChiamante, String nomeTeam, String titoloHackathon, Controller controller) {
-        frame = new JFrame("Aggiunta documento");
+        frame = new JFrame("Aggiungi documento");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
@@ -32,23 +32,34 @@ public class AggiungiDocumento extends JFrame {
         });
 
         // campo testo per il path del file
-        filePathField.setEditable(false);
-        // pulsante "Sfoglia"
-        browseButton.addActionListener(e -> chooseFile());
-        // pulsante "Carica"
-        vButton.addActionListener(new ActionListener() {
+        filePercorsoFile.setEditable(false);
+        // pulsante "Sfoglia documenti"
+        browseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.metodoAggiungiDocumento(frame, selectedFile, nomeTeam, titoloHackathon);
+                chooseFile();
             }
         });
 
-        xButton.addActionListener(new ActionListener() {
+        // pulsante "Carica documento"
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                filePathField.setText("");
+                controller.metodoAggiungiDocumento(frame, fileSelezionato, nomeTeam, titoloHackathon);
+                filePercorsoFile.setText("");
             }
         });
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                azzeraCampi();
+            }
+        });
+    }
+
+    private void azzeraCampi() {
+        filePercorsoFile.setText("");
     }
 
     private void chooseFile() {
@@ -56,8 +67,8 @@ public class AggiungiDocumento extends JFrame {
         int result = fileChooser.showOpenDialog(this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            selectedFile = fileChooser.getSelectedFile();
-            filePathField.setText(selectedFile.getAbsolutePath());
+            fileSelezionato = fileChooser.getSelectedFile();
+            filePercorsoFile.setText(fileSelezionato.getAbsolutePath());
         }
     }
 }

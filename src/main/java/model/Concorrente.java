@@ -18,14 +18,8 @@ public class Concorrente extends UtentePiattaforma {
 
     // metodo per creare un nuovo team
     public Team creaTeam(String nome, String password, Hackathon hackathon) {
-        // verifica se il periodo di iscrizione è ancora attivo
-        if (hackathon.iscrizioniTerminate()) {
-            throw new IllegalStateException("Impossibile creare un nuovo team: periodo di iscrizioni all'Hackathon: '" + hackathon.getTitolo()+ "' terminato");
-        }
-        // verifica se l'Hackathon ha raggiunto il numero massimo di iscritti
-        if (hackathon.isCompleto()) {
-            throw new IllegalStateException("Impossibile creare un nuovo team: Hackathon: '" + hackathon.getTitolo()+ "' al completo");
-        }
+        hackathon.verificaStatoGara("Iscrizioni aperte", "creare un nuovo team");
+
         // verifica se esiste già un team con lo stesso nome nello stesso Hackathon
         if (hackathon.esisteTeam(nome)) {
             throw new IllegalArgumentException("Esiste già un team con nome '" + nome + "' iscritto all'Hackathon: '" + hackathon.getTitolo()+ "'!");
@@ -35,13 +29,9 @@ public class Concorrente extends UtentePiattaforma {
         if (teamEsistente != null) {
             throw new IllegalStateException("Impossibile creare un nuovo team: concorrente già iscritto al team '" + teamEsistente + "'");
         }
-        // crea e aggiunge il team solo se il nome è disponibile
+
         Team team = new Team(nome, password, hackathon, this);
         hackathon.aggiungiTeam(team, this);
-        // aggiunge il team ai teamGiudicati dei giudici appartenenti a quell'Hackathon
-        for (Giudice giudice : hackathon.getGiudiceList()) {
-            giudice.aggiungiTeam(team);
-        }
         // aggiunge il team alla lista teamAppartenenza del concorrente
         teamAppartenenzaList.add(team);
         // aggiunge il concorrente al team
@@ -53,14 +43,8 @@ public class Concorrente extends UtentePiattaforma {
 
     // metodo per partecipare a un team già esistente
     public void partecipaTeam(String nomeTeam, String password, Hackathon hackathon) {
-        // verifica se il periodo di iscrizione è ancora attivo
-        if (hackathon.iscrizioniTerminate()) {
-            throw new IllegalStateException("Impossibile creare un nuovo team: periodo di iscrizioni all'Hackathon: '" + hackathon.getTitolo()+ "' terminato");
-        }
-        // verifica se l'Hackathon ha raggiunto il numero massimo di iscritti
-        if (hackathon.isCompleto()) {
-            throw new IllegalStateException("Impossibile creare un nuovo team: Hackathon: '" + hackathon.getTitolo()+ "' al completo");
-        }
+        hackathon.verificaStatoGara("Iscrizioni aperte", "partecipare al team");
+
         // verifica che il concorrente non partecipi già all'hackathon con un altro team
         String teamEsistente = isPartecipanteOfHackathon(hackathon); // variabile che individua il team, se esiste, a cui è già iscritto il concorrente
         if (teamEsistente != null) {

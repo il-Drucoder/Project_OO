@@ -13,11 +13,11 @@ public class AccediTeam {
     private JPanel panel1;
     private JComboBox comboBoxTitoloHackathon;
     private JComboBox comboBoxNomeTeam;
-    private JButton vButton;
-    private JButton xButton;
+    private JButton okButton;
+    private JButton cancelButton;
 
     public AccediTeam(JFrame frameChiamante, String emailConcorrente , Controller controller) {
-        frame = new JFrame("Accedi Team");
+        frame = new JFrame("Accedi team");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
@@ -31,44 +31,53 @@ public class AccediTeam {
             }
         });
 
-        // Primo comboBox Hackathon con default
+        // primo comboBox Hackathon con default
         List<String> hackathonList = new ArrayList<>();
         hackathonList.add("Seleziona");
         hackathonList.addAll(controller.getListaTitoliHackathon());
         comboBoxTitoloHackathon.setModel(new DefaultComboBoxModel<>(hackathonList.toArray(new String[0])));
 
-        comboBoxTitoloHackathon.addActionListener(e -> {
-            String selectedHackathon = (String) comboBoxTitoloHackathon.getSelectedItem();
-            // Evita di aggiornare se è selezionato "Seleziona"
-            if (selectedHackathon != null && !selectedHackathon.equals("Seleziona")) {
-                // Secondo comboBox Team con default
-                List<String> teamList = new ArrayList<>();
-                teamList.add("Seleziona");
-                String nomeTeam = controller.getNomeTeamByHackathonAndConcorrente(selectedHackathon, emailConcorrente);
-                if (nomeTeam != null) {
-                    teamList.add(nomeTeam);
+        // secondo comboBox Team solo default
+        comboBoxNomeTeam.addItem("Seleziona");
+
+        comboBoxTitoloHackathon.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedHackathon = (String) comboBoxTitoloHackathon.getSelectedItem();
+                // evita di aggiornare se è selezionato "Seleziona"
+                if (selectedHackathon != null && !selectedHackathon.equals("Seleziona")) {
+                    // secondo comboBox Team con default
+                    List<String> teamList = new ArrayList<>();
+                    teamList.add("Seleziona");
+                    String nomeTeam = controller.getNomeTeamByHackathonAndConcorrente(selectedHackathon, emailConcorrente);
+                    if (nomeTeam != null) {
+                        teamList.add(nomeTeam);
+                    }
+                    comboBoxNomeTeam.setModel(new DefaultComboBoxModel<>(teamList.toArray(new String[0])));
+                } else {
+                    // reset comboBoxNomeTeam se non è selezionato un Hackathon valido
+                    comboBoxNomeTeam.setModel(new DefaultComboBoxModel<>(new String[] {"Seleziona"}));
                 }
-                comboBoxNomeTeam.setModel(new DefaultComboBoxModel<>(teamList.toArray(new String[0])));
-            } else {
-                // Reset comboBoxNomeTeam se non è selezionato un Hackathon valido
-                comboBoxNomeTeam.setModel(new DefaultComboBoxModel<>(new String[] {"Seleziona"}));
             }
         });
 
-        vButton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String titoloHackathon = comboBoxTitoloHackathon.getSelectedItem().toString();
-                String nomeTeam = comboBoxNomeTeam.getSelectedItem().toString();
-                controller.metodoAccediTeam(frame, titoloHackathon, nomeTeam, emailConcorrente);
+                controller.metodoAccediTeam(frame, comboBoxTitoloHackathon.getSelectedItem().toString(), comboBoxNomeTeam.getSelectedItem().toString(), emailConcorrente);
+                azzeraCampi();
             }
         });
 
-        xButton.addActionListener(new ActionListener() {
+        cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                comboBoxTitoloHackathon.setSelectedIndex(0);
+                azzeraCampi();
             }
         });
+    }
+
+    private void azzeraCampi() {
+        comboBoxTitoloHackathon.setSelectedIndex(0);
     }
 }

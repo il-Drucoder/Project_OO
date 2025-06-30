@@ -1,16 +1,15 @@
 package gui;
 
-import controller.Controller;
-
 import javax.swing.*;
+import java.util.List;
 
 public class ClassificaHackathon {
     public JFrame frame;
     private JPanel panel1;
     private JLabel labelTitoloClassifica;
-    private JLabel labelClassifica;
+    private JTextArea textAreaClassifica;
 
-    public ClassificaHackathon(JFrame frameChiamante, String titoloHackathon, String emailUtente, Controller controller) {
+    public ClassificaHackathon(JFrame frameChiamante, List<String> classifica, String titoloHackathon) {
         frame = new JFrame("Classifica Hackathon");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -25,15 +24,8 @@ public class ClassificaHackathon {
             }
         });
 
-        if (controller.existUtentePiattaforma(emailUtente)) {
-            labelTitoloClassifica.setText("Classifica Hackathon '" + titoloHackathon + "'");
-            labelClassifica.setText(controller.getHackathonByTitolo(titoloHackathon).getClassifica(controller.getUtentePiattaformaByEmail(emailUtente)));
-        } else {
-            JOptionPane.showMessageDialog(frame,
-                    "Utente non registrato",
-                    "Warning page",
-                    JOptionPane.WARNING_MESSAGE);
-            frame.setVisible(false);
-        }
+        labelTitoloClassifica.setText("Classifica Hackathon '" + titoloHackathon + "'");
+        textAreaClassifica.setEditable(false);
+        textAreaClassifica.setText("posizione \t| punteggio \t| nome team " + classifica);
     }
 }

@@ -9,10 +9,9 @@ import java.awt.event.ActionListener;
 public class BenvenutoConcorrente {
     public JFrame frame;
     private JPanel panel1;
-    private JLabel label1;
-    private JLabel nome;
-    private JComboBox fieldSceltaAzione;
-    private JButton OKButton;
+    private JLabel labelNomeConcorrente;
+    private JComboBox comboBoxSceltaAzione;
+    private JButton okButton;
 
     public BenvenutoConcorrente(JFrame frameChiamante, String emailConcorrente, Controller controller) {
         frame= new JFrame("Benvenuto Concorrente");
@@ -21,24 +20,27 @@ public class BenvenutoConcorrente {
         frame.pack();
         frame.setVisible(true);
 
-        nome.setText("Benvenutə " + controller.getUtentePiattaformaByEmail(emailConcorrente).getNome() + " " + controller.getUtentePiattaformaByEmail(emailConcorrente).getCognome());
+        labelNomeConcorrente.setText("Benvenutə " + controller.getUtentePiattaformaByEmail(emailConcorrente).getNome() + " " + controller.getUtentePiattaformaByEmail(emailConcorrente).getCognome());
 
-        OKButton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String sceltaAzione = fieldSceltaAzione.getSelectedItem().toString();
-                if(sceltaAzione.equals("Crea team")){
+                String sceltaAzione = comboBoxSceltaAzione.getSelectedItem().toString();
+                if (sceltaAzione.equals("Crea team")) {
                     CreaTeam CreaTeamGUI = new CreaTeam(frame, emailConcorrente, controller);
                     frame.setVisible(false);
-                } else if(sceltaAzione.equals("Partecipa a un team")){
+                } else if (sceltaAzione.equals("Partecipa a un team")) {
                     PartecipaTeam PartecipaTeamGUI = new PartecipaTeam(frame, emailConcorrente, controller);
                     frame.setVisible(false);
-                } else if(sceltaAzione.equals("Accedi a un team")){
+                } else if (sceltaAzione.equals("Accedi a un team")) {
                     AccediTeam AccediTeamGUI = new AccediTeam(frame, emailConcorrente, controller);
                     frame.setVisible(false);
-                } else if(sceltaAzione.equals("Visualizza la classifica di un Hackathon")){
-                    VisualizzaClassifica VisualizzazioneClassificaGUI = new VisualizzaClassifica(frame, emailConcorrente, controller);
+                } else if (sceltaAzione.equals("Cerca Hackathon")) {
+                    SelezionaHackathon SelezionaHackathonGUI = new SelezionaHackathon(frame, emailConcorrente, controller.getListaTitoliHackathon(), controller);
                     frame.setVisible(false);
+                } else if (sceltaAzione.equals("Logout")) {
+                    frameChiamante.setVisible(true);
+                    frame.dispose();
                 }
             }
         });

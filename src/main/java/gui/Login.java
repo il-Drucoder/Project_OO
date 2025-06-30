@@ -10,11 +10,10 @@ import java.util.Arrays;
 public class Login {
     public JFrame frame;
     private JPanel panel1;
-    private JLabel label1;
     private JTextField fieldEmailUtente;
     private JPasswordField fieldPassword;
-    private JButton vButton;
-    private JButton xButton;
+    private JButton okButton;
+    private JButton cancelButton;
 
     public Login(JFrame frameChiamante, Controller controller) {
         frame = new JFrame("Login");
@@ -31,21 +30,26 @@ public class Login {
             }
         });
 
-        vButton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 controller.metodoLogin(frame, fieldEmailUtente.getText(), fieldPassword.getPassword());
-                // sovrascrizione della password (per renderla inaccessibile in modo non autorizzato)
-                Arrays.fill(fieldPassword.getPassword(), '\0');
+                azzeraCampi();
             }
         });
 
-        xButton.addActionListener(new ActionListener() {
+        cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                fieldEmailUtente.setText("");
-                fieldPassword.setText("");
+                azzeraCampi();
             }
         });
+    }
+
+    private void azzeraCampi() {
+        fieldEmailUtente.setText("");
+        fieldPassword.setText("");
+        // sovrascrizione della password (per renderla inaccessibile in modo non autorizzato)
+        Arrays.fill(fieldPassword.getPassword(), '\0');
     }
 }

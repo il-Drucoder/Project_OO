@@ -11,11 +11,11 @@ import java.util.List;
 public class VisualizzaDocumenti {
     public JFrame frame;
     private JPanel panel1;
-    private JComboBox comboBox1;
-    private JButton vButton;
-    private JButton xButton;
+    private JComboBox comboBoxDocumento;
+    private JButton okButton;
+    private JButton cancelButton;
 
-    public VisualizzaDocumenti(JFrame frameChiamante, String nomeTeam, String titoloHackathon, Controller controller) {
+    public VisualizzaDocumenti(JFrame frameChiamante, String nomeTeam, String titoloHackathon, String emailUtente, Controller controller) {
         frame = new JFrame("Visualizza Documenti");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -32,22 +32,27 @@ public class VisualizzaDocumenti {
 
         List<String> docList = new ArrayList<>();
         docList.add("Seleziona");
-        docList.addAll(controller.getListaDocumentiByTeam(controller.getTeamByNomeAndHackathon(nomeTeam, titoloHackathon)));
-        comboBox1.setModel(new DefaultComboBoxModel<>(docList.toArray(new String[0])));
+        docList.addAll(controller.getListaDocumentiByTeam(nomeTeam, titoloHackathon));
+        comboBoxDocumento.setModel(new DefaultComboBoxModel<>(docList.toArray(new String[0])));
 
-        vButton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedFile = (String) comboBox1.getSelectedItem();
-                controller.metodoVisualizzaDocumenti(frame, selectedFile);
+                String selectedFile = (String) comboBoxDocumento.getSelectedItem();
+                controller.metodoVisualizzaDocumenti(frame, selectedFile, nomeTeam, titoloHackathon, emailUtente);
+                azzeraCampi();
             }
         });
 
-        xButton.addActionListener(new ActionListener() {
+        cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                comboBox1.setSelectedIndex(0);
+                azzeraCampi();
             }
         });
+    }
+
+    private void azzeraCampi() {
+        comboBoxDocumento.setSelectedIndex(0);
     }
 }

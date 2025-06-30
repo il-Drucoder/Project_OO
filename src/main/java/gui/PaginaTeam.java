@@ -15,10 +15,13 @@ public class PaginaTeam {
     private JLabel labelMembri;
     private JLabel labelHackathonAppartenenza;
     private JLabel labelStatoGara;
-    private JButton buttonAggiungiDocumento;
-    private JButton buttonVisualizzaDocumenti;
+    private JButton addDocButton;
+    private JButton viewDocButton;
+    private JPanel panelGiudice;
+    private JSpinner spinnerVoto;
+    private JButton confirmButton;
 
-    public PaginaTeam(JFrame frameChiamante, String nomeTeam, String titoloHackathon, Controller controller) {
+    public PaginaTeam(JFrame frameChiamante, String nomeTeam, String titoloHackathon, String emailUtente, Controller controller) {
         frame = new JFrame("Team");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -33,28 +36,62 @@ public class PaginaTeam {
             }
         });
 
-        labelNomeTeam.setText("Nome: "+ controller.getTeamByNome(nomeTeam).getNome());
-        labelPunteggioTeam.setText("Punteggio: "+ controller.getTeamByNome(nomeTeam).getPunteggio());
-        labelCapogruppoTeam.setText("Capogruppo: " + controller.getTeamByNome(nomeTeam).getCreatore().getNome() + " " + controller.getTeamByNome(nomeTeam).getCreatore().getCognome());
-        labelMembri.setText("Membri: " + controller.getListaMembriByTeam(controller.getTeamByNome(nomeTeam)));
-        labelHackathonAppartenenza.setText("Hackathon appartenenza: " + controller.getTeamByNome(nomeTeam).getHackathon().getTitolo());
+        labelNomeTeam.setText("Nome: " + nomeTeam);
+        labelPunteggioTeam.setText("Punteggio: " + controller.getTeamByNomeAndHackathon(nomeTeam, titoloHackathon).getPunteggio());
+
+        // verifica possibilità di visualizzare il punteggio ottenuto da un team (quando la gara è stata valutata e solo per i concorrenti nel team)
+        // oppure da giudici e organizzatore appartenenti all'Hackathon, in qualsiasi momento della gara
+        if (controller.isPartecipanteInTeam(nomeTeam, titoloHackathon, emailUtente)) {
+            if (!controller.getHackathonByTitolo(titoloHackathon).verificaStatoGara("Valutata")) {
+                labelPunteggioTeam.setVisible(false);
+            }
+        } else if (!(controller.isGiudice(emailUtente) || controller.isOrganizzatore(emailUtente))) {
+            labelPunteggioTeam.setVisible(false);
+        }
+
+        labelCapogruppoTeam.setText("Capogruppo: " + controller.getTeamByNomeAndHackathon(nomeTeam, titoloHackathon).getCreatore().getNome() + " " + controller.getTeamByNomeAndHackathon(nomeTeam, titoloHackathon).getCreatore().getCognome());
+        labelMembri.setText("Membri: " + controller.getListaNominativiMembriByTeam(nomeTeam, titoloHackathon));
+        labelHackathonAppartenenza.setText("Hackathon appartenenza: " + controller.getTeamByNomeAndHackathon(nomeTeam, titoloHackathon).getHackathon().getTitolo());
         boolean statoGara = controller.getHackathonByTitolo(titoloHackathon).isTerminato();
         labelStatoGara.setText("Stato gara: " + (statoGara ? "terminata" : "in corso"));
 
-        buttonVisualizzaDocumenti.addActionListener(new ActionListener() {
+        viewDocButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VisualizzaDocumenti VisualizzaDocumentiGUI = new VisualizzaDocumenti(frame, nomeTeam, titoloHackathon, controller);
+                VisualizzaDocumenti VisualizzaDocumentiGUI = new VisualizzaDocumenti(frame, nomeTeam, titoloHackathon, emailUtente, controller);
                 frame.setVisible(false);
             }
         });
 
-        buttonAggiungiDocumento.addActionListener(new ActionListener() {
+        addDocButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 AggiungiDocumento AggiungiDocumentoGUI = new AggiungiDocumento(frame, nomeTeam, titoloHackathon, controller);
                 frame.setVisible(false);
             }
         });
+
+        // verifica possibilità di aggiungere un documento (mentre la gara è in corso e solo per i concorrenti nel team)
+        if (!(controller.getHackathonByTitolo(titoloHackathon).verificaStatoGara("In corso") && controller.isPartecipanteInTeam(nomeTeam, titoloHackathon, emailUtente))) {
+            addDocButton.setVisible(false);
+        }
+
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.metodoAssegnaVoto(frame, emailUtente, (int) spinnerVoto.getValue(), nomeTeam, titoloHackathon);
+                spinnerVoto.setValue(0);
+                // ritorniamo alla pagina di seleziona documento (pagina precedente a questa)
+                frameChiamante.setVisible(true);
+                frame.dispose();
+            }
+        });
+
+        // verifica possibilità di assegnare un voto (solo al termine gara, solo tramite un giudice assegnato al team che non ha ancora giudicato tale team)
+        if (!controller.getHackathonByTitolo(titoloHackathon).verificaStatoGara("Terminata") || !controller.isGiudice(emailUtente)) {
+            panelGiudice.setVisible(false);
+        } else if (!controller.isTeamGiudicabileByGiudice(nomeTeam, titoloHackathon, emailUtente)) {
+            panelGiudice.setVisible(false);
+        }
     }
 }

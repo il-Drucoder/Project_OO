@@ -8,15 +8,15 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VisualizzaClassifica {
+public class SelezionaHackathon {
     public JFrame frame;
     private JPanel panel1;
     private JComboBox comboBoxTitoloHackathon;
-    private JButton vButton;
-    private JButton xButton;
+    private JButton okButton;
+    private JButton cancelButton;
 
-    public VisualizzaClassifica(JFrame frameChiamante, String emailUtente, Controller controller) {
-        frame = new JFrame("Classifica Hackathon");
+    public SelezionaHackathon(JFrame frameChiamante, String emailUtente, List<String> listaTitoliHackathon, Controller controller) {
+        frame = new JFrame("Ricerca Hackathon");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
@@ -30,26 +30,29 @@ public class VisualizzaClassifica {
             }
         });
 
-        // Primo comboBox Hackathon con default
+        // comboBox Hackathon con default
         List<String> hackathonList = new ArrayList<>();
         hackathonList.add("Seleziona");
-        hackathonList.addAll(controller.getListaTitoliHackathon());
+        hackathonList.addAll(listaTitoliHackathon);
         comboBoxTitoloHackathon.setModel(new DefaultComboBoxModel<>(hackathonList.toArray(new String[0])));
 
-        vButton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String titoloHackathon = comboBoxTitoloHackathon.getSelectedItem().toString();
-                controller.metodoVisualizzaClassifica(frame, titoloHackathon, emailUtente);
+                controller.metodoSelezionaHackathon(frame, comboBoxTitoloHackathon.getSelectedItem().toString(), emailUtente);
+                azzeraCampi();
             }
         });
 
-        xButton.addActionListener(new ActionListener() {
+        cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                comboBoxTitoloHackathon.setSelectedIndex(0);
+                azzeraCampi();
             }
         });
     }
 
+    private void azzeraCampi() {
+        comboBoxTitoloHackathon.setSelectedIndex(0);
+    }
 }

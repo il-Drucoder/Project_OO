@@ -1,4 +1,3 @@
-
 package gui;
 
 import controller.Controller;
@@ -11,7 +10,7 @@ public class Home {
     private JPanel mainPanel;
     private JPanel panel1;
     private JButton Login;
-    private JButton SignUp;
+    private JButton Signup;
     public static JFrame frameHome;
 
     private static Controller controller;
@@ -36,7 +35,7 @@ public class Home {
             }
         });
 
-        SignUp.addActionListener(new ActionListener() {
+        Signup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Signup SignupGUI = new Signup(frameHome, controller);
