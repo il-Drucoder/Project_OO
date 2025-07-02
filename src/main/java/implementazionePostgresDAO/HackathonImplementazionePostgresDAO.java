@@ -79,7 +79,6 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
         return lista;
     }
 
-    @Override
     public void setDescrizioneHackathon(Hackathon hackathon, String descrizione) {
         String sql = "UPDATE hackathon SET descrizione = ? WHERE titolo = ?";
         try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
@@ -90,7 +89,6 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
         }
     }
 
-    @Override
     public void setClassificaHackathon(Hackathon hackathon, String classifica) {
         String sql = "UPDATE hackathon SET classifica = ? WHERE titolo = ?";
         try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
@@ -111,8 +109,7 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
                         rs.getString("nome"),
                         rs.getString("cognome"),
                         rs.getString("email"),
-                        rs.getString("pw"),
-                        rs.getString("ruolo")
+                        rs.getString("pw")
                 );
             }
         } catch (SQLException e) {
@@ -120,6 +117,4 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
         }
         return null;
     }
-
-
 }

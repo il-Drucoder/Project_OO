@@ -5,16 +5,16 @@ import java.util.List;
 
 public class Concorrente extends UtentePiattaforma {
     // rappresentazione relazioni
-    private final List<Team> teamAppartenenzaList = new ArrayList<>();
+    private final List<Team> teamsAppartenenza = new ArrayList<>();
 
     // metodi
     // Costruttore
     public Concorrente(String nome, String cognome, String email, String password) {
-        super(nome, cognome, email, password); // chiama il costruttore padre
+        super(nome, cognome, email, password, "concorrente"); // chiama il costruttore padre
     }
 
     // getter per la lista di team a cui appartiene il concorrente
-    public List<Team> getListTeamAppartenenza() { return teamAppartenenzaList; }
+    public List<Team> getListTeamAppartenenza() { return teamsAppartenenza; }
 
     // metodo per creare un nuovo team
     public Team creaTeam(String nome, String password, Hackathon hackathon) {
@@ -33,7 +33,7 @@ public class Concorrente extends UtentePiattaforma {
         Team team = new Team(nome, password, hackathon, this);
         hackathon.aggiungiTeam(team, this);
         // aggiunge il team alla lista teamAppartenenza del concorrente
-        teamAppartenenzaList.add(team);
+        teamsAppartenenza.add(team);
         // aggiunge il concorrente al team
         team.aggiungiMembro(this);
         // incrementa di uno il numero di concorrenti partecipanti all'Hackathon
@@ -66,14 +66,14 @@ public class Concorrente extends UtentePiattaforma {
         // aggiunto il concorrente al team
         teamTrovato.aggiungiMembro(this);
         // aggiunge il team alla lista teamAppartenenza del concorrente
-        teamAppartenenzaList.add(teamTrovato);
+        teamsAppartenenza.add(teamTrovato);
         // incrementa di uno il numero di concorrenti partecipanti all'Hackathon
         hackathon.addIscritto(teamTrovato);
     }
 
     // metodo per accedere a un team già esistente (verifica che il concorrente appartenga al team)
     public void accediTeam(Team team) {
-        for (Team teamC : teamAppartenenzaList) {
+        for (Team teamC : teamsAppartenenza) {
             if (team == teamC) {
                 return;
             }

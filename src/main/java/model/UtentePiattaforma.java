@@ -6,14 +6,16 @@ public class UtentePiattaforma {
     protected String cognome;
     protected String email;
     protected String pw;
+    protected String ruolo;
 
     // metodi
-    // Costruttore che imposta automaticamente isRegistrato a true e imposta automaticamente l'id
-    public UtentePiattaforma(String nome, String cognome, String email, String pw) {
+    // Costruttore
+    public UtentePiattaforma(String nome, String cognome, String email, String pw, String ruolo) {
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
         this.pw = pw;
+        this.ruolo = ruolo;
     }
 
     public String getNome() { return nome; }
@@ -24,6 +26,10 @@ public class UtentePiattaforma {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    // metodi per il DAO
+    public String getPw() { return pw; }
+    public String getRuolo() { return ruolo; }
 
     // metodo per visualizzare la classifica di un determinato Hackathon
     public void visualizzaClassifica(Hackathon hackathon) {

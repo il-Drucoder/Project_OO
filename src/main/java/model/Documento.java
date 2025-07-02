@@ -9,9 +9,9 @@ public class Documento {
     // attributi
     private LocalDate dataAggiornamento;
     private File file;
-    private final List<String> Commenti;
 
     // rappresentazione relazioni
+    private final List<String> Commenti;
     private final Team team;
 
     // metodi

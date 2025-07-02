@@ -1,10 +1,15 @@
 package controller;
 
+import dao.*;
+import database.ConnessioneDatabase;
 import gui.*;
+import implementazionePostgresDAO.*;
 import model.*;
 
 import javax.swing.*;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -20,10 +25,16 @@ public class Controller {
     private final List<UtentePiattaforma> UtentiPiattaforma;
     private final List<Voto> Voti;
 
-    /* ************************************************************************** */
+    // collegamento Controller al DAO
+    private final UtentePiattaformaDAO utenteDAO;
+    private final HackathonDAO hackathonDAO;
+    private final TeamDAO teamDAO;
+    private final DocumentoDAO documentoDAO;
+    private final VotoDAO votoDAO;
 
+    /* ************************************************************************** */    
     // Costruttore
-    public Controller() {
+    public Controller() throws SQLException {
         Concorrenti = new ArrayList<>();
         Documenti = new ArrayList<>();
         Giudici = new ArrayList<>();
@@ -33,7 +44,125 @@ public class Controller {
         UtentiPiattaforma = new ArrayList<>();
         Voti = new ArrayList<>();
 
-        // preleva dati dal DB uploadAllList() { dumpDati... }
+        Connection connessione = ConnessioneDatabase.getInstance().connection;
+        this.utenteDAO = new UtentePiattaformaImplementazionePostgresDAO(connessione);
+        this.hackathonDAO = new HackathonImplementazionePostgresDAO(connessione);
+        this.teamDAO = new TeamImplementazionePostgresDAO(connessione);
+        this.documentoDAO = new DocumentoImplementazionePostgresDAO(connessione);
+        this.votoDAO = new VotoImplementazionePostgresDAO(connessione);
+
+        // preleva dati dal DB
+        uploadAllList();
+    }
+
+    /* ************************************************************************** */
+
+    // metodi per la connessione al DataBase
+
+    private void uploadAllList() throws SQLException {
+        dumpDatiUtente();
+        dumpDatiHackathon();
+        dumpDatiTeam();
+        //dumpDatiDocumento();
+        dumpDatiVoto();
+        dumpDatiConvocazioni();
+        dumpDatiPartecipazioniAiTeam();
+        dumpDatiVotiAssegnati();
+    }
+
+    private void dumpDatiUtente() {
+        UtentiPiattaforma.addAll(utenteDAO.getTuttiUtenti());
+        for (UtentePiattaforma utente : UtentiPiattaforma) {
+            if (isOrganizzatore(utente.getEmail())) {
+                Organizzatori.add(new Organizzatore(utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getPw()));
+            } else if (isGiudice(utente.getEmail())) {
+                Giudici.add(new Giudice(utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getPw()));
+            } else {
+                Concorrenti.add(new Concorrente(utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getPw()));
+            }
+        }
+    }
+
+    private void dumpDatiHackathon() {
+        Hackathons.addAll(hackathonDAO.getTuttiHackathon());
+        // aggiunta degli Hackathon alla lista degli Hackathon creati degli organizzatori
+        for (Hackathon hackathon : Hackathons) {
+            Organizzatore organizzatore = hackathon.getCreatore();
+            organizzatore.getHackathonCreati().add(hackathon);
+        }
+    }
+
+    private void dumpDatiTeam() {
+        Teams.addAll(teamDAO.getTuttiTeam());
+        for (Team team : Teams) {
+            // aggiunta dei Team alla lista di team degli Hackathon
+            Hackathon hackathon = team.getHackathon();
+            hackathon.getTeamList().add(team);
+        }
+    }
+
+    private void dumpDatiDocumento() {}
+
+    private void dumpDatiVoto() {
+        Voti.addAll(votoDAO.getTuttiVoti());
+        for (Voto voto : Voti) {
+            // aggiunta dei Voti alla lista di voti assegnati dei giudici
+            Giudice giudice = voto.getGiudice();
+            giudice.getVotiAssegnati().add(voto);
+            // aggiunta dei Voti alla lista di voti dei team
+            Team team = voto.getTeam();
+            team.getVoti().add(voto);
+        }
+    }
+
+    private void dumpDatiConvocazioni() {
+        List<String> emailGiudiciConvocati = utenteDAO.getEmailGiudiciConvocati();
+        for (String email : emailGiudiciConvocati) {
+            Giudice giudice = getGiudiceByEmail(email);
+            // aggiunta degli Hackathon nella lista degli Hackathon assegnati dei giudici
+            List<Hackathon> hackathonAssegnati = giudice.getHackathonAssegnati();
+            hackathonAssegnati.addAll(utenteDAO.getHackathonAssegnatiToGiudice(giudice));
+            // aggiunta dei Giudici alla lista dei giudici degli Hackathon
+            for (Hackathon hackathon : hackathonAssegnati) {
+                hackathon.getGiudiceList().add(giudice);
+            }
+            // aggiunta degli Organizzatori nella lista degli organizzatori invitanti dei giudici
+            List<Organizzatore> organizzatoriInvitanti = utenteDAO.getOrganizzatoriInvitantiToGiudice(giudice);
+            giudice.getOrganizzatoriInvitanti().addAll(organizzatoriInvitanti);
+            // aggiunta dei Giudici alla lista dei giudici convocati degli organizzatori
+            for (Organizzatore organizzatore : organizzatoriInvitanti) {
+                organizzatore.getGiudiciConvocati().add(giudice);
+            }
+        }
+    }
+
+    private void dumpDatiPartecipazioniAiTeam() {
+        for (Team team : Teams) {
+            // aggiunta dei Concorrenti alla lista dei membri dei team
+            team.getMembri().addAll(teamDAO.getConcorrentiOfTeam(team));
+            for (Concorrente concorrente : team.getMembri()) {
+                // aggiunta dei Team alla lista dei team dei concorrenti
+                concorrente.getListTeamAppartenenza().add(team);
+            }
+        }
+    }
+
+    private void dumpDatiVotiAssegnati() {
+        for (Giudice giudice : Giudici) {
+            for (Hackathon hackathon : giudice.getHackathonAssegnati()) {
+                for (Team team : hackathon.getTeamList()) {
+                    for (Voto voto : team.getVoti()) {
+                        if (voto.getGiudice().equals(giudice)) {
+                            // aggiunta dei Team alla lista dei team giudicati del giudice
+                            giudice.getTeamGiudicati().add(team);
+                        } else {
+                            // aggiunta dei Team alla lista dei team giudicabili del giudice
+                            giudice.getTeamGiudicabili().addAll(hackathon.getTeamList());
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /* ************************************************************************** */
@@ -43,9 +172,8 @@ public class Controller {
     public void addUtente(UtentePiattaforma utente) {
         UtentiPiattaforma.add(utente);
         // inserisci dati nel DB
+        utenteDAO.aggiungiUtente(utente);
     }
-
-    // public void dumpDatiUtente() { ... UtentiPiattaforma.addAll(getTuttiUtenti()); }
 
     public List<UtentePiattaforma> getUtentiPiattaformaList() {
         return UtentiPiattaforma;
@@ -192,10 +320,7 @@ public class Controller {
     public void addOrganizzatore(Organizzatore organizzatore) {
         Organizzatori.add(organizzatore);
         addUtente(organizzatore);
-        // inserisci dati nel DB
     }
-
-    // public void dumpDati...
 
     public List<Organizzatore> getOrganizzatoriList() {
         return Organizzatori;
@@ -278,6 +403,7 @@ public class Controller {
                 Giudice giudice = getGiudiceByEmail(emailGiudice);
                 Hackathon hackathon = getHackathonByTitolo(titoloHackathon);
                 organizzatore.convocaGiudice(hackathon, giudice);
+                utenteDAO.convocaGiudice(organizzatore, giudice, hackathon);
                 JOptionPane.showMessageDialog(frame,
                         "Convocazione giudice avvenuta con successo",
                         "Message page",
@@ -306,10 +432,7 @@ public class Controller {
     public void addGiudice(Giudice giudice) {
         Giudici.add(giudice);
         addUtente(giudice);
-        // inserisci dati nel DB
     }
-
-    // public void dumpDati...
 
     public List<Giudice> getGiudiciList() {
         return Giudici;
@@ -493,10 +616,7 @@ public class Controller {
     public void addConcorrente(Concorrente concorrente) {
         Concorrenti.add(concorrente);
         addUtente(concorrente);
-        // inserisci dati nel DB
     }
-
-    // public void dumpDati...
 
     public List<Concorrente> getConcorrentiList() {
         return Concorrenti;
@@ -521,6 +641,7 @@ public class Controller {
                 try {
                     Team team = concorrente.creaTeam(nomeTeam, pwTeamString, hackathon);
                     addTeam(team);
+                    utenteDAO.partecipaTeam(concorrente, nomeTeam, titoloHackathon);
                     JOptionPane.showMessageDialog(frame,
                             "Creazione team avvenuta con successo",
                             "Message page",
@@ -558,6 +679,7 @@ public class Controller {
             if (concorrente != null) {
                 try {
                     concorrente.partecipaTeam(nomeTeam, pwTeamString, getHackathonByTitolo(titoloHackathon));
+                    utenteDAO.partecipaTeam(concorrente, nomeTeam, titoloHackathon);
                     PaginaTeam PaginaTeamGUI = new PaginaTeam(frame, nomeTeam, titoloHackathon, emailConcorrente, this);
                     frame.setVisible(false);
                 } catch (Exception e) {
@@ -671,6 +793,8 @@ public class Controller {
 
     public void addHackathon(Hackathon hackathon) {
         Hackathons.add(hackathon);
+        // inserisci dati nel DB
+        hackathonDAO.aggiungiHackathon(hackathon);
     }
 
     public Hackathon getHackathonByTitolo(String titolo) {
@@ -749,7 +873,11 @@ public class Controller {
 
     // metodi per la classe Team
 
-    public void addTeam(Team team) { Teams.add(team); }
+    public void addTeam(Team team) {
+        Teams.add(team);
+        // aggiungi dati nel DB
+        teamDAO.aggiungiTeam(team);
+    }
 
     public List<Team> getTeamsList() {
         return Teams;
@@ -889,6 +1017,8 @@ public class Controller {
 
     public void addDocumento(Documento documento) {
         Documenti.add(documento);
+        // aggiungi dati nel DB
+        //documentoDAO.aggiungiDocumento(documento);
     }
 
     public Documento setFileInDocumento(File file, Team team) {
@@ -972,6 +1102,8 @@ public class Controller {
 
     public void addVoto(Voto voto) {
         Voti.add(voto);
+        // aggiungi dati nel DB
+        votoDAO.aggiungiVoto(voto);
     }
 
     /* ************************************************************************** */

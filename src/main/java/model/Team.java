@@ -48,6 +48,11 @@ public class Team {
         this.pw = pw;
     }
 
+    // metodo per il DAO
+    public String getPw() {
+        return pw;
+    }
+
     public Hackathon getHackathon() { return hackathon; }
 
     public Concorrente getCreatore() { return creatore; }

@@ -65,7 +65,7 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
         return lista;
     }
 
-    public Hackathon getHackathonByTitolo(String titolo) {
+    private Hackathon getHackathonByTitolo(String titolo) {
         Hackathon hackathon = null;
         String sql = "SELECT * FROM hackathon WHERE titolo = ?";
 
@@ -109,8 +109,7 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
                         rs.getString("nome"),
                         rs.getString("cognome"),
                         rs.getString("email"),
-                        rs.getString("pw"),
-                        rs.getString("ruolo")
+                        rs.getString("pw")
                 );
             }
         } catch (SQLException e) {
@@ -129,8 +128,7 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
                         rs.getString("nome"),
                         rs.getString("cognome"),
                         rs.getString("email"),
-                        rs.getString("pw"),
-                        rs.getString("ruolo")
+                        rs.getString("pw")
                 );
             }
         } catch (SQLException e) {
@@ -139,4 +137,20 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
         return null;
     }
 
+    public List<Concorrente> getConcorrentiOfTeam(Team team) {
+        List<Concorrente> membri = new ArrayList<>();
+        String sql = "SELECT emailconcorrente FROM concorrenteteam WHERE nometeam = ? AND titolohackathon = ?";
+        try (PreparedStatement ps = connessione.prepareStatement(sql)) {
+            ps.setString(1, team.getNome());
+            ps.setString(2, team.getHackathon().getTitolo());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Concorrente c = getConcorrenteByEmail(rs.getString("emailconcorrente"));
+                membri.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

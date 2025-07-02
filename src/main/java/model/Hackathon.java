@@ -44,6 +44,23 @@ public class Hackathon {
         this.numVotiAssegnati = 0;
     }
 
+    // Costruttore per il DAO
+    public Hackathon(Organizzatore creatore, String titolo, int numMaxIscritti, int dimMaxTeam, LocalDate inizioIscrizioni, LocalDate fineIscrizioni, LocalDate dataInizio, LocalDate dataFine, String descrizioneProblema, String classifica, String indirizzoSede, int numIscritti, int numVotiAssegnati ) {
+        this.creatore = creatore;
+        this.titolo = titolo;
+        this.numMaxIscritti = numMaxIscritti;
+        this.dimMaxTeam = dimMaxTeam;
+        this.inizioIscrizioni = inizioIscrizioni;
+        this.fineIscrizioni = fineIscrizioni;
+        this.dataInizio = dataInizio;
+        this.dataFine = dataFine;
+        this.descrizioneProblema = descrizioneProblema;
+        this.classifica = convertStringToList(classifica);
+        this.indirizzoSede = indirizzoSede;
+        this.numIscritti = numIscritti;
+        this.numVotiAssegnati = numVotiAssegnati;
+    }
+
     public String getTitolo() { return titolo; }
     // setter con controllo del creatore
     public void setTitolo(Organizzatore creatore, String titolo) {
@@ -164,6 +181,11 @@ public class Hackathon {
             throw new SecurityException("Accesso negato!");
         }
         this.indirizzoSede = indirizzoSede;
+    }
+
+    // metodo per il DAO
+    public String getIndirizzoSede() {
+        return indirizzoSede;
     }
 
     // metodo utilizzato per il calcolo della classifica di un hackathon
@@ -320,5 +342,27 @@ public class Hackathon {
             case ("Iscrizioni non ancora aperte") :
                 throw new IllegalStateException("Impossibile " + azioneDaFare + ": iscrizioni non ancora aperte");
         }
+    }
+
+    // metodo usato dal Costruttore per il DAO
+    public static List<String> convertStringToList(String input) {
+        if (input == null || input.length() < 2) {
+            return new ArrayList<>();
+        }
+
+        // Rimuove le parentesi quadre iniziali e finali
+        String trimmed = input.substring(1, input.length() - 1).trim();
+
+        // Se la stringa è vuota dopo aver rimosso le parentesi
+        if (trimmed.isEmpty()) {
+            return new ArrayList<>();
+        }
+        String[] elements = trimmed.split(",");
+        List<String> result = new ArrayList<>();
+        for (String s : elements) {
+            result.add(s.trim());
+        }
+
+        return result;
     }
 }

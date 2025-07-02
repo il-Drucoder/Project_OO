@@ -11,7 +11,7 @@ public class Organizzatore extends UtentePiattaforma {
 
     // Costruttore
     public Organizzatore(String nome, String cognome, String email, String password) {
-        super(nome, cognome, email, password); // chiama il costruttore padre
+        super(nome, cognome, email, password, "organizzatore"); // chiama il costruttore padre
     }
 
     // getter per la lista di hackathon creati
@@ -37,8 +37,8 @@ public class Organizzatore extends UtentePiattaforma {
     public void convocaGiudice(Hackathon hackathon, Giudice giudice) {
         hackathon.verificaStatoGara("Iscrizioni non ancora aperte", "convocare il giudice");
 
-        // aggiunta dell'Hackathon alla lista hackathonAssegnati del giudice
-        giudice.aggiungiHackathonAssegnato(hackathon, this);
+        giudice.aggiungiHackathonAssegnato(hackathon, this); // aggiunta dell'Hackathon alla lista hackathonAssegnati del giudice
+        giudice.aggiungiOrganizzatoriInvitanti(this); // aggiunta dell'organizzatore alla lista organizzatoriInvitanti del giudice
         hackathon.aggiungiGiudice(giudice, this); // aggiunta del giudice alla lista giudiceList dell'Hackathon
         giudiciConvocati.add(giudice); // aggiunta del giudice assegnato alla lista giudiciConvocati
     }

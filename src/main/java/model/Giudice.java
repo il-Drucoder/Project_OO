@@ -14,7 +14,7 @@ public class Giudice extends UtentePiattaforma {
     // metodi
     // Costruttore
     public Giudice(String nome, String cognome, String email, String password) {
-        super(nome, cognome, email, password); // chiama il costruttore padre
+        super(nome, cognome, email, password, "giudice"); // chiama il costruttore padre
     }
 
     // getter per la lista di hackathon assegnati
@@ -41,7 +41,7 @@ public class Giudice extends UtentePiattaforma {
     }
 
     // getter per la lista di voti assegnati ai team
-    public List<Voto> getvotiAssegnati() { return votiAssegnati; }
+    public List<Voto> getVotiAssegnati() { return votiAssegnati; }
     // metodo per assegnare un voto a un team
     public void assegnaVoto(Team team, int valore) {
         // verica che il valore da assegnare come voto sia compreso tra 0 e 10
