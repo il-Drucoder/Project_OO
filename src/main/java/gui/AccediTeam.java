@@ -7,19 +7,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AccediTeam {
-    public JFrame frame;
+    private static final String SDEFAULT = "Seleziona";
+    private static JFrame frame;
     private JPanel panel1;
-    private JComboBox comboBoxTitoloHackathon;
-    private JComboBox comboBoxNomeTeam;
+    private JComboBox<String> comboBoxTitoloHackathon;
+    private JComboBox<String> comboBoxNomeTeam;
     private JButton okButton;
     private JButton cancelButton;
 
     public AccediTeam(JFrame frameChiamante, String emailConcorrente , Controller controller) {
-        frame = new JFrame("Accedi team");
+        new JFrame("Accedi team");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
@@ -33,22 +35,22 @@ public class AccediTeam {
 
         // primo comboBox Hackathon con default
         List<String> hackathonList = new ArrayList<>();
-        hackathonList.add("Seleziona");
+        hackathonList.add(SDEFAULT);
         hackathonList.addAll(controller.getListaTitoliHackathon());
         comboBoxTitoloHackathon.setModel(new DefaultComboBoxModel<>(hackathonList.toArray(new String[0])));
 
         // secondo comboBox Team solo default
-        comboBoxNomeTeam.addItem("Seleziona");
+        comboBoxNomeTeam.addItem(SDEFAULT);
 
         comboBoxTitoloHackathon.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedHackathon = (String) comboBoxTitoloHackathon.getSelectedItem();
-                // evita di aggiornare se è selezionato "Seleziona"
-                if (selectedHackathon != null && !selectedHackathon.equals("Seleziona")) {
+                // evita di aggiornare se è selezionato (SDEFAULT)
+                if (selectedHackathon != null && !selectedHackathon.equals(SDEFAULT)) {
                     // secondo comboBox Team con default
                     List<String> teamList = new ArrayList<>();
-                    teamList.add("Seleziona");
+                    teamList.add(SDEFAULT);
                     String nomeTeam = controller.getNomeTeamByHackathonAndConcorrente(selectedHackathon, emailConcorrente);
                     if (nomeTeam != null) {
                         teamList.add(nomeTeam);
@@ -56,7 +58,7 @@ public class AccediTeam {
                     comboBoxNomeTeam.setModel(new DefaultComboBoxModel<>(teamList.toArray(new String[0])));
                 } else {
                     // reset comboBoxNomeTeam se non è selezionato un Hackathon valido
-                    comboBoxNomeTeam.setModel(new DefaultComboBoxModel<>(new String[] {"Seleziona"}));
+                    comboBoxNomeTeam.setModel(new DefaultComboBoxModel<>(new String[] {SDEFAULT}));
                 }
             }
         });
@@ -64,7 +66,10 @@ public class AccediTeam {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.metodoAccediTeam(frame, comboBoxTitoloHackathon.getSelectedItem().toString(), comboBoxNomeTeam.getSelectedItem().toString(), emailConcorrente);
+                // se getSelectedItem() restituisce null, il metodo toString di Object restituisce il secondo parametro, ovvero: SDEFAULT
+                String hackathonSelezionato = Objects.toString(comboBoxTitoloHackathon.getSelectedItem(), SDEFAULT);
+                String teamSelezionato = Objects.toString(comboBoxNomeTeam.getSelectedItem(), SDEFAULT);
+                controller.metodoAccediTeam(frame, hackathonSelezionato, teamSelezionato, emailConcorrente);
                 azzeraCampi();
             }
         });

@@ -15,6 +15,10 @@ public class Concorrente extends UtentePiattaforma {
 
     // getter per la lista di team a cui appartiene il concorrente
     public List<Team> getListTeamAppartenenza() { return teamsAppartenenza; }
+    // metodo utilizzato dal dumpDatiPartecipazioniAiTeam
+    public void addTeamAppartenenza(Team team) {
+        teamsAppartenenza.add(team);
+    }
 
     // metodo per creare un nuovo team
     public Team creaTeam(String nome, String password, Hackathon hackathon) {

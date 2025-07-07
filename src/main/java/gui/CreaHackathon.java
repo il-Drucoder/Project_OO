@@ -15,7 +15,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 public class CreaHackathon {
-    public JFrame frame;
+    private static JFrame frame;
     private JPanel panel1;
     private JTextField fieldTitoloHackathon;
     private JXDatePicker datePickerInizioIscrizioni;
@@ -28,9 +28,9 @@ public class CreaHackathon {
     private JButton cancelButton;
 
     public CreaHackathon(JFrame frameChiamante, String emailOrganizzatore, Controller controller) {
-        frame = new JFrame("Crea Hackathon");
+        new JFrame("Crea Hackathon");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 

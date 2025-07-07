@@ -16,6 +16,11 @@ public class Organizzatore extends UtentePiattaforma {
 
     // getter per la lista di hackathon creati
     public List<Hackathon> getHackathonCreati() { return hackathonCreati; }
+    // metodo utilizzato dal dumpDatiHackathon
+    public void addHackathonCreati(Hackathon hackathon) {
+        hackathonCreati.add(hackathon);
+    }
+
     // metodo per la creazione di un nuovo Hackathon da parte di un organizzatore
     public Hackathon creaHackathon(String titolo, int numMaxIscritti, int dimMaxTeam, LocalDate inizioIscrizioni, LocalDate dataInizio, LocalDate dataFine, String indirizzoSede) {
         // verifica che la data di inizio Hackathon non venga dopo la data di fine Hackathon

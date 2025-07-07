@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 public class Signup {
-    public JFrame frame;
+    private static JFrame frame;
     private JPanel panel1;
     private JTextField fieldNome;
     private JTextField fieldCognome;
@@ -18,9 +18,9 @@ public class Signup {
     private JButton cancelButton;
 
     public Signup(JFrame frameChiamante, Controller controller) {
-        frame= new JFrame("Signup");
+        new JFrame("Signup");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 

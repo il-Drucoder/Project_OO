@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class PaginaDocumento {
-    public JFrame frame;
+    private static JFrame frame;
     private JPanel panel1;
     private JLabel labelNomeDocumento;
     private JButton openDocButton;
@@ -20,9 +20,9 @@ public class PaginaDocumento {
     private JButton sendCommentButton;
 
     public PaginaDocumento(JFrame frameChiamante, String selectedFile, String nomeTeam, String titoloHackathon, String emailUtente, Controller controller) {
-        frame = new JFrame("Documento");
+        new JFrame("Documento");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 

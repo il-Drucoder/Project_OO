@@ -19,6 +19,11 @@ public class Giudice extends UtentePiattaforma {
 
     // getter per la lista di hackathon assegnati
     public List<Hackathon> getHackathonAssegnati() { return hackathonAssegnati; }
+    //metodo utilizzato dal dumpDatiConvocazioni
+    public void addHackathonAssegnati(Hackathon hackathon) {
+        hackathonAssegnati.add(hackathon);
+    }
+
     // metodo per aggiungere un Hackathon alla lista hackathonAssegnati del giudice
     public void aggiungiHackathonAssegnato(Hackathon hackathon, Organizzatore organizzatore) {
         // verifica che l'Hackathon esista
@@ -42,6 +47,11 @@ public class Giudice extends UtentePiattaforma {
 
     // getter per la lista di voti assegnati ai team
     public List<Voto> getVotiAssegnati() { return votiAssegnati; }
+    // metodo utilizzato dal dumpDatiVoto
+    public void addVotiAssegnati(Voto voto) {
+        votiAssegnati.add(voto);
+    }
+
     // metodo per assegnare un voto a un team
     public void assegnaVoto(Team team, int valore) {
         // verica che il valore da assegnare come voto sia compreso tra 0 e 10
@@ -70,6 +80,11 @@ public class Giudice extends UtentePiattaforma {
 
     // getter per la lista di organizzatori invitanti
     public List<Organizzatore> getOrganizzatoriInvitanti() { return organizzatoriInvitanti; }
+    // metodo utilizzato dal dumpDatiConvocazioni
+    public void addOrganizzatoriInvitanti(Organizzatore organizzatore) {
+        organizzatoriInvitanti.add(organizzatore);
+    }
+
     // metodo per aggiungere un organizzatore alla lista OrganizzatoriInvitanti del giudice
     public void aggiungiOrganizzatoriInvitanti(Organizzatore organizzatore) {
         if (organizzatore == null) {
@@ -80,6 +95,11 @@ public class Giudice extends UtentePiattaforma {
 
     // getter per la lista di team giudicabili
     public List<Team> getTeamGiudicabili() { return teamGiudicabili; }
+    // metodo utilizzato dal dumpDatiVotiAssegnati
+    public void addTeamGiudicabili(Team team) {
+        teamGiudicabili.add(team);
+    }
+
     // metodo per aggiungere un team alla lista teamGiudicabili
     public void aggiungiTeam(Team team) {
         teamGiudicabili.add(team);
@@ -87,6 +107,11 @@ public class Giudice extends UtentePiattaforma {
 
     // getter per la lista di team giudicati
     public List<Team> getTeamGiudicati() { return teamGiudicati; }
+    // metodo utilizzato dal dumpDatiVotiAssegnati
+    public void addTeamGiudicati(Team team) {
+        teamGiudicati.add(team);
+    }
+
     // metodo per aggiungere un team alla lista teamGiudicati (chiamato esclusivamente dal metodo assegna voto)
     private void giudicaTeam(Team team) {
         teamGiudicati.add(team);
@@ -94,6 +119,11 @@ public class Giudice extends UtentePiattaforma {
     }
 
     public boolean isAssegnato(Team team) {
-        return teamGiudicabili.contains(team);
+        for (Team teamG :  teamGiudicabili) {
+            if (teamG.getNome().equals(team.getNome()) && teamG.getHackathon().getTitolo().equals(team.getHackathon().getTitolo())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

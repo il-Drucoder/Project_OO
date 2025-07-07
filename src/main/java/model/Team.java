@@ -20,7 +20,7 @@ public class Team {
     public Team(String nome, String pw, Hackathon hackathon, Concorrente creatore) {
         this.nome = nome;
         this.pw = pw;
-        this.hackathon = hackathon; // imposta l'hackathon di riferimento
+        this.hackathon = hackathon; // imposta l'Hackathon di riferimento
         this.creatore = creatore;
     }
 
@@ -59,9 +59,13 @@ public class Team {
 
     // getter per la lista di voti assegnati al team
     public List<Voto> getVoti() { return voti; }
+    // metodo utilizzato dal dumpDatiVoto
+    public void addVoti(Voto voto) {
+        voti.add(voto);
+    }
+
     // aggiungi un voto al team
     public void aggiungiVoto(Giudice giudice, Voto voto) {
-        this.getHackathon().verificaStatoGara("Terminata", "assegnare voto");
         if(!giudice.isAssegnato(this)) {
             throw new SecurityException("Accesso negato!");
         }
@@ -82,6 +86,10 @@ public class Team {
 
     // getter per la lista di membri partecipanti al team
     public List<Concorrente> getMembri() { return membri; }
+    // metodo utilizzato dal dumpDatiPartecipazioneAiTeam
+    public void addMembri(Concorrente concorrente) {
+        membri.add(concorrente);
+    }
 
     // metodo per aggiungere un nuovo concorrente al team
     public void aggiungiMembro(Concorrente concorrente) {
@@ -99,11 +107,15 @@ public class Team {
 
     // getter per la lista di documenti creati dal team
     public List<Documento> getDocumenti() { return documenti; }
+    // metodo utilizzato dal dumpDatiDocumento
+    public void addDocumenti(Documento documento) {
+        documenti.add(documento);
+    }
 
     // metodo per aggiungere un documento alla lista documenti di un team
     public void aggiungiDocumento(Documento documento) {
         for (Documento d : getDocumenti()) {
-            if (documento.getFile().equals(d.getFile())) {
+            if (documento.getNomeFile().equals(d.getNomeFile())) {
                 throw new IllegalArgumentException("Il documento selezionato è già stato caricato");
             }
         }

@@ -28,7 +28,9 @@ public class Hackathon {
     // metodi
     // Costruttore (solo l'organizzatore può creare un Hackathon)
     public Hackathon(Organizzatore creatore, String titolo, int numMaxIscritti, int dimMaxTeam, LocalDate inizioIscrizioni, LocalDate dataInizio, LocalDate dataFine, String indirizzoSede) {
-        if (creatore == null) throw new IllegalArgumentException("Creatore mancante!");
+        if (creatore == null) {
+            throw new IllegalArgumentException("Creatore mancante!");
+        }
         this.creatore = creatore;
         this.titolo = titolo;
         this.numMaxIscritti = numMaxIscritti;
@@ -106,6 +108,11 @@ public class Hackathon {
     }
 
     public int getNumVotiAssegnati() { return numVotiAssegnati; }
+    // metodo utilizzato dal dumpDatiVoti
+    public void addNumVotiAssegnati() {
+        numVotiAssegnati++;
+    }
+
     // metodo che aggiunge un voto (invocato nel metodo assegnaVoto in giudice), con controllo del team
     public void addVoto(Team team) {
         if (getTeamList().contains(team)) {
@@ -159,13 +166,15 @@ public class Hackathon {
             throw new SecurityException("Accesso negato: utente non esistente!");
         }
         // verifica se la classifica è già stata calcolata
-        if (classifica == null) {
+        if (classifica.isEmpty()) {
             setClassifica(calcolaClassifica());
         }
         return this.classifica;
     }
     // setter privato, invocabile solo dalla funzione calcolaClassifica
-    private void setClassifica(List<String> classifica) { this.classifica = classifica; }
+    private void setClassifica(List<String> classifica) {
+        this.classifica = classifica;
+    }
 
     // getter con controllo dell'utente
     public String getIndirizzoSede(UtentePiattaforma utente) {
@@ -199,18 +208,20 @@ public class Hackathon {
             throw new IllegalStateException("L'Hackathon è terminato. In attesa delle valutazioni dei giudici. Impossibile calcolare la classifica!");
         }
 
-        // prende i team della lista, li ordina per punteggio (decrescente), li converte in formato stringa
+        // prende i team della lista, li ordina per punteggio (decrescente)
         teamList.sort(Comparator.comparing(Team::getPunteggio).reversed());
+        return getClassificaFormattata();
+    }
+
+    private List<String> getClassificaFormattata() {
         List<String> classificaFormattata = new ArrayList<>();
         int posizione = 1;
         for (int i = 0; i < teamList.size(); i++) {
-            // verifica dei pari merito
-            if (i > 0) { // verifica a partire dal secondo classificato
-                if (teamList.get(i).getPunteggio() != teamList.get(i - 1).getPunteggio()) { // non c'è il pari merito, cambio la posizione in classifica
-                    posizione = i + 1;
-                }
+            // verifica dei pari merito (verifica a partire dal secondo classificato)
+            if (i > 0 && teamList.get(i).getPunteggio() != teamList.get(i - 1).getPunteggio()) { // non c'è il pari merito, cambio la posizione in classifica
+                posizione = i + 1;
             }
-            classificaFormattata.add("\n" + posizione + "\t|" + teamList.get(i).getPunteggio() + "\t|" + teamList.get(i).getNome());
+            classificaFormattata.add("\n" + posizione + "\t| " + teamList.get(i).getPunteggio() + "\t| " + teamList.get(i).getNome());
         }
         return classificaFormattata;
     }
@@ -246,7 +257,7 @@ public class Hackathon {
     // metodo per aggiungere un giudice alla lista giudiceList
     public void aggiungiGiudice(Giudice giudice, Organizzatore organizzatore) {
         // verifica che il giudice venga aggiunto all'Hackathon solo tramite il creatore
-        if(!getCreatore().equals(organizzatore)) {
+        if(!getCreatore().getEmail().equals(organizzatore.getEmail())) {
             throw new SecurityException("Impossibile aggiungere giudice!");
         }
         this.giudiceList.add(giudice);
@@ -280,10 +291,18 @@ public class Hackathon {
     public List<Giudice> getGiudiceList() {
         return new ArrayList<>(giudiceList); // restituisce una copia per sicurezza
     }
+    // metodo utilizzato dal dumpDatiConvocazioni
+    public void addGiudice(Giudice giudice) {
+        giudiceList.add(giudice);
+    }
 
     // getter per la lista di team che partecipano all'Hackathon
     public List<Team> getTeamList() {
         return new ArrayList<>(teamList);
+    }
+    // metodo utilizzato dal dumpDatiTeam
+    public void addTeam(Team team) {
+        teamList.add(team);
     }
 
     // metodo che determina lo stato in cui si trova la gara
@@ -341,6 +360,8 @@ public class Hackathon {
                 throw new IllegalStateException("Impossibile " + azioneDaFare + ": periodo di iscrizioni aperto");
             case ("Iscrizioni non ancora aperte") :
                 throw new IllegalStateException("Impossibile " + azioneDaFare + ": iscrizioni non ancora aperte");
+            default :
+                throw new IllegalArgumentException("Impossibile " + azioneDaFare + ": STATO GARA NON VALIDO!");
         }
     }
 

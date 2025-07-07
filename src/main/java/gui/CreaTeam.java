@@ -8,20 +8,21 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class CreaTeam {
-    public JFrame frame;
+    private static JFrame frame;
     private JPanel panel1;
-    private JComboBox comboBoxTitoloHackathon;
+    private JComboBox<String> comboBoxTitoloHackathon;
     private JTextField fieldNomeTeam;
     private JPasswordField fieldPasswordTeam;
     private JButton okButton;
     private JButton cancelButton;
 
     public CreaTeam(JFrame frameChiamante, String emailConcorrente, Controller controller) {
-        frame = new JFrame("Crea team");
+        new JFrame("Crea team");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
@@ -42,7 +43,8 @@ public class CreaTeam {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.metodoCreaTeam(frame, comboBoxTitoloHackathon.getSelectedItem().toString(), fieldNomeTeam.getText(), fieldPasswordTeam.getPassword(), emailConcorrente);
+                String hackathonSelezionato = Objects.toString(comboBoxTitoloHackathon.getSelectedItem(), "Seleziona");
+                controller.metodoCreaTeam(frame, hackathonSelezionato, fieldNomeTeam.getText(), fieldPasswordTeam.getPassword(), emailConcorrente);
                 // sovrascrizione della password (per renderla inaccessibile in modo non autorizzato)
                 Arrays.fill(fieldPasswordTeam.getPassword(), '\0');
                 azzeraCampi();

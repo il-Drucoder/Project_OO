@@ -31,20 +31,20 @@ public class Voto {
     // override del metodo toString della classe Object, per rappresentare l'oggetto Voto come stringa (numero a lettere)
     @Override
     public String toString() {
-        String str = switch (getValore()) {
-            case 0 -> "zero";
-            case 1 -> "uno";
-            case 2 -> "due";
-            case 3 -> "tre";
-            case 4 -> "quattro";
-            case 5 -> "cinque";
-            case 6 -> "sei";
-            case 7 -> "sette";
-            case 8 -> "otto";
-            case 9 -> "nove";
-            case 10 -> "dieci";
-            default -> "non valido";
-        };
-        return str;
+        return (switch (getValore()) {
+                    case 0 -> "zero";
+                    case 1 -> "uno";
+                    case 2 -> "due";
+                    case 3 -> "tre";
+                    case 4 -> "quattro";
+                    case 5 -> "cinque";
+                    case 6 -> "sei";
+                    case 7 -> "sette";
+                    case 8 -> "otto";
+                    case 9 -> "nove";
+                    case 10 -> "dieci";
+                    default -> "non valido";
+                }
+        );
     }
 }

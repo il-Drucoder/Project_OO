@@ -7,19 +7,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ConvocaGiudice {
-    public JFrame frame;
+    private static final String SDEFAULT = "Seleziona";
+    private static JFrame frame;
     private JPanel panel1;
-    private JComboBox comboBoxGiudice;
-    private JComboBox comboBoxHackathon;
+    private JComboBox<String> comboBoxEmailGiudice;
+    private JComboBox<String> comboBoxTitoloHackathon;
     private JButton okButton;
     private JButton cancelButton;
 
     public ConvocaGiudice(JFrame frameChiamante, String emailOrganizzatore, Controller controller) {
-        frame = new JFrame("Convoca giudice");
+        new JFrame("Convoca giudice");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
@@ -33,26 +35,27 @@ public class ConvocaGiudice {
 
         // primo comboBox Hackathon con default
         List<String> hackathonList = new ArrayList<>();
-        hackathonList.add("Seleziona");
+        hackathonList.add(SDEFAULT);
         hackathonList.addAll(controller.getListaTitoliHackathonAnnunciatiByCreatore(emailOrganizzatore));
-        comboBoxHackathon.setModel(new DefaultComboBoxModel<>(hackathonList.toArray(new String[0])));
+        comboBoxTitoloHackathon.setModel(new DefaultComboBoxModel<>(hackathonList.toArray(new String[0])));
 
         // secondo comboBox Giudice con default
         // utilizzo di liste parallele per non perdere l'associazione nome-email
         List<String> giudiceNominativoList = new ArrayList<>();
         List<String> giudiceEmailList = new ArrayList<>();
-        giudiceNominativoList.add("Seleziona");
+        giudiceNominativoList.add(SDEFAULT);
         giudiceEmailList.add("");
         giudiceNominativoList.addAll(controller.getListaNominativiGiudici());
         giudiceEmailList.addAll(controller.getListaEmailGiudici());
-        comboBoxGiudice.setModel(new DefaultComboBoxModel<>(giudiceNominativoList.toArray(new String[0])));
+        comboBoxEmailGiudice.setModel(new DefaultComboBoxModel<>(giudiceNominativoList.toArray(new String[0])));
 
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // ricavo l'indice del nominativo selezionato, per accedere alla rispettiva email
-                int selectedIndex = comboBoxGiudice.getSelectedIndex();
-                controller.metodoConvocaGiudice(frame, comboBoxHackathon.getSelectedItem().toString(), giudiceEmailList.get(selectedIndex).toString(), emailOrganizzatore);
+                int selectedIndex = comboBoxEmailGiudice.getSelectedIndex();
+                String hackathonSelezionato = Objects.toString(comboBoxTitoloHackathon.getSelectedItem(), SDEFAULT);
+                controller.metodoConvocaGiudice(frame, hackathonSelezionato, giudiceEmailList.get(selectedIndex), emailOrganizzatore);
                 azzeraCampi();
             }
         });
@@ -60,13 +63,13 @@ public class ConvocaGiudice {
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                azzeraCampi();;
+                azzeraCampi();
             }
         });
     }
 
     private void azzeraCampi() {
-        comboBoxHackathon.setSelectedIndex(0);
-        comboBoxGiudice.setSelectedIndex(0);
+        comboBoxTitoloHackathon.setSelectedIndex(0);
+        comboBoxEmailGiudice.setSelectedIndex(0);
     }
 }

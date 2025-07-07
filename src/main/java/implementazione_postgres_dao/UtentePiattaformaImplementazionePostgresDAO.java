@@ -1,4 +1,4 @@
-package implementazionePostgresDAO;
+package implementazione_postgres_dao;
 
 import dao.UtentePiattaformaDAO;
 import model.*;
@@ -11,7 +11,7 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
 
     private final Connection connessione;
 
-    // costruttore
+    // Costruttore
     public UtentePiattaformaImplementazionePostgresDAO(Connection connessione) {
         this.connessione = connessione;
     }
@@ -32,10 +32,8 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
             stmt.setString(5, utente.getRuolo());
 
             stmt.executeUpdate(); // esegue l'inserimento nel db
-            System.out.println("Utente inserito con successo.");
         } catch (SQLException e) {
-            System.out.println("Errore durante l'inserimento dell'utente:");
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile aggiungere l'utente " + utente.getCognome() + " " + utente.getNome(), e);
         }
     }
 
@@ -57,9 +55,8 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
                 lista.add(u);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB gli utenti", e);
         }
-
         return lista;
     }
 
@@ -78,25 +75,8 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
 
             stmt.executeUpdate(); // esegue l'inserimento nel db
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile aggiungere la convocazione effettuata dall'organizzatore: " + organizzatore.getCognome() + " " + organizzatore.getNome() + "verso il giudice: " + giudice.getCognome() + " " + giudice.getNome(), e);
         }
-    }
-
-    @Override
-    public List<String> getEmailGiudiciConvocati() {
-        List<String> lista = new ArrayList<>();
-        String sql = "SELECT DISTINCT emailgiudice FROM convocazione";
-
-        try (Statement stmt = connessione.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                lista.add(rs.getString("emailgiudice"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return lista;
     }
 
     @Override
@@ -111,9 +91,8 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
                 lista.add(h);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB la lista di Hackathon assegnati al giudice: " + giudice.getCognome() + " " + giudice.getNome(), e);
         }
-
         return lista;
     }
 
@@ -146,7 +125,7 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
                 );
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB l'Hackathon: " + titolo, e);
         }
         return hackathon;
     }
@@ -165,7 +144,7 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
                 );
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB l'organizzatore con email: " + email, e);
         }
         return null;
     }
@@ -182,12 +161,12 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
                 lista.add(o);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB gli organizzatori invitanti il giudice : " + giudice.getCognome() + " " + giudice.getNome(), e);
         }
-
         return lista;
     }
 
+    // metodi del concorrente
     @Override
     public void partecipaTeam(Concorrente concorrente, String nomeTeam, String titoloHackathon) {
         // scriviamo la query per inserire i dati
@@ -202,7 +181,7 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
 
             stmt.executeUpdate(); // esegue l'inserimento nel db
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile aggiungere la partecipazione del concorrente: " + concorrente.getCognome() + " " + concorrente.getCognome() + " al team: " + nomeTeam + " dell'Hackathon: " + titoloHackathon, e);
         }
     }
 }

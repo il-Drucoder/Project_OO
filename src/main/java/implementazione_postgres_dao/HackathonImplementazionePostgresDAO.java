@@ -1,8 +1,7 @@
-package implementazionePostgresDAO;
+package implementazione_postgres_dao;
 
 import dao.HackathonDAO;
-import model.Hackathon;
-import model.Organizzatore;
+import model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +11,7 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
 
     private final Connection connessione;
 
+    // Costruttore
     public HackathonImplementazionePostgresDAO(Connection connessione) {
         this.connessione = connessione;
     }
@@ -36,10 +36,8 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
             stmt.setInt(13,0);
 
             stmt.executeUpdate();
-            System.out.println("Hackathon inserito con successo.");
         } catch (SQLException e) {
-            System.out.println("Errore durante l'inserimento dell'hackathon:");
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile aggiungere l'Hackathon: " + hackathon.getTitolo(), e);
         }
     }
 
@@ -50,13 +48,11 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
 
         try (Statement stmt = connessione.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
                 String emailOrganizzatore = rs.getString("creatore");
                 Organizzatore organizzatore = getOrganizzatoreByEmail(emailOrganizzatore);
 
                 Hackathon h = new Hackathon(
-                        // query che restituisce un organizzatore tramite email
                         organizzatore,
                         rs.getString("titolo"),
                         rs.getInt("nummaxiscritti"),
@@ -74,28 +70,32 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
                 lista.add(h);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB gli Hackathon", e);
         }
         return lista;
     }
 
+    @Override
     public void setDescrizioneHackathon(Hackathon hackathon, String descrizione) {
-        String sql = "UPDATE hackathon SET descrizione = ? WHERE titolo = ?";
+        String sql = "UPDATE hackathon SET descrizioneproblema = ? WHERE titolo = ?";
         try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
             stmt.setString(1,descrizione);
             stmt.setString(2,hackathon.getTitolo());
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Impossibile aggiornare la descrizione del problema per l'Hackathon: " + hackathon.getTitolo(), e);
         }
     }
 
+    @Override
     public void setClassificaHackathon(Hackathon hackathon, String classifica) {
         String sql = "UPDATE hackathon SET classifica = ? WHERE titolo = ?";
         try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
             stmt.setString(1,classifica);
             stmt.setString(2,hackathon.getTitolo());
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Impossibile aggiornare la classifica per l'Hackathon: " + hackathon.getTitolo(), e);
         }
     }
 
@@ -113,8 +113,30 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
                 );
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB l'organizzatore con email: " + email, e);
         }
         return null;
+    }
+
+    @Override
+    public void incrementaTeam(String titoloHackathon) {
+        String sql = "UPDATE hackathon SET numiscritti = numiscritti + 1  WHERE titolo = ?";
+        try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
+            stmt.setString(1, titoloHackathon);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("Impossibile aggiornare il numero di team nel DB per l'Hackathon: " + titoloHackathon, e);
+        }
+    }
+
+    @Override
+    public void incrementaVoti(String titoloHackathon) {
+        String sql = "UPDATE hackathon SET numvotiassegnati = numvotiassegnati + 1  WHERE titolo = ?";
+        try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
+            stmt.setString(1, titoloHackathon);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("Impossibile aggiornare il numero di voti nel DB per l'Hackathon: " + titoloHackathon, e);
+        }
     }
 }

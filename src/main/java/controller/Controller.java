@@ -3,27 +3,29 @@ package controller;
 import dao.*;
 import database.ConnessioneDatabase;
 import gui.*;
-import implementazionePostgresDAO.*;
+import implementazione_postgres_dao.*;
 import model.*;
 
 import javax.swing.*;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.List;
 
 public class Controller {
+    private static final String EPDEFAULT = "Error page";
+    private static final String WPDEFAULT = "Warning page";
+    private static final String MPDEFAULT = "Message page";
+    private static final String SDEFAULT = "Seleziona";
 
-    private final List<Concorrente> Concorrenti;
-    private final List<Documento> Documenti;
-    private final List<Giudice> Giudici;
-    private final List<Hackathon> Hackathons;
-    private final List<Organizzatore> Organizzatori;
-    private final List<Team> Teams;
-    private final List<UtentePiattaforma> UtentiPiattaforma;
-    private final List<Voto> Voti;
+    private final List<Concorrente> concorrenti;
+    private final List<Documento> documenti;
+    private final List<Giudice> giudici;
+    private final List<Hackathon> hackathons;
+    private final List<Organizzatore> organizzatori;
+    private final List<Team> teams;
+    private final List<UtentePiattaforma> utentiPiattaforma;
+    private final List<Voto> voti;
 
     // collegamento Controller al DAO
     private final UtentePiattaformaDAO utenteDAO;
@@ -35,16 +37,16 @@ public class Controller {
     /* ************************************************************************** */    
     // Costruttore
     public Controller() throws SQLException {
-        Concorrenti = new ArrayList<>();
-        Documenti = new ArrayList<>();
-        Giudici = new ArrayList<>();
-        Hackathons = new ArrayList<>();
-        Organizzatori = new ArrayList<>();
-        Teams = new ArrayList<>();
-        UtentiPiattaforma = new ArrayList<>();
-        Voti = new ArrayList<>();
+        concorrenti = new ArrayList<>();
+        documenti = new ArrayList<>();
+        giudici = new ArrayList<>();
+        hackathons = new ArrayList<>();
+        organizzatori = new ArrayList<>();
+        teams = new ArrayList<>();
+        utentiPiattaforma = new ArrayList<>();
+        voti = new ArrayList<>();
 
-        Connection connessione = ConnessioneDatabase.getInstance().connection;
+        Connection connessione = ConnessioneDatabase.getInstance().getConnection();
         this.utenteDAO = new UtentePiattaformaImplementazionePostgresDAO(connessione);
         this.hackathonDAO = new HackathonImplementazionePostgresDAO(connessione);
         this.teamDAO = new TeamImplementazionePostgresDAO(connessione);
@@ -59,11 +61,11 @@ public class Controller {
 
     // metodi per la connessione al DataBase
 
-    private void uploadAllList() throws SQLException {
+    private void uploadAllList() {
         dumpDatiUtente();
         dumpDatiHackathon();
         dumpDatiTeam();
-        //dumpDatiDocumento();
+        dumpDatiDocumento();
         dumpDatiVoto();
         dumpDatiConvocazioni();
         dumpDatiPartecipazioniAiTeam();
@@ -71,96 +73,122 @@ public class Controller {
     }
 
     private void dumpDatiUtente() {
-        UtentiPiattaforma.addAll(utenteDAO.getTuttiUtenti());
-        for (UtentePiattaforma utente : UtentiPiattaforma) {
+        utentiPiattaforma.addAll(utenteDAO.getTuttiUtenti());
+        for (UtentePiattaforma utente : utentiPiattaforma) {
             if (isOrganizzatore(utente.getEmail())) {
-                Organizzatori.add(new Organizzatore(utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getPw()));
+                organizzatori.add(new Organizzatore(utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getPw()));
             } else if (isGiudice(utente.getEmail())) {
-                Giudici.add(new Giudice(utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getPw()));
+                giudici.add(new Giudice(utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getPw()));
             } else {
-                Concorrenti.add(new Concorrente(utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getPw()));
+                concorrenti.add(new Concorrente(utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getPw()));
             }
         }
     }
 
     private void dumpDatiHackathon() {
-        Hackathons.addAll(hackathonDAO.getTuttiHackathon());
+        hackathons.addAll(hackathonDAO.getTuttiHackathon());
         // aggiunta degli Hackathon alla lista degli Hackathon creati degli organizzatori
-        for (Hackathon hackathon : Hackathons) {
-            Organizzatore organizzatore = hackathon.getCreatore();
-            organizzatore.getHackathonCreati().add(hackathon);
+        for (Hackathon hackathon : hackathons) {
+            Organizzatore organizzatore = getOrganizzatoreByEmail(hackathon.getCreatore().getEmail());
+            organizzatore.addHackathonCreati(hackathon);
         }
     }
 
     private void dumpDatiTeam() {
-        Teams.addAll(teamDAO.getTuttiTeam());
-        for (Team team : Teams) {
-            // aggiunta dei Team alla lista di team degli Hackathon
-            Hackathon hackathon = team.getHackathon();
-            hackathon.getTeamList().add(team);
+        teams.addAll(teamDAO.getTuttiTeam());
+        // aggiunta dei Team alla lista di team degli Hackathon
+        for (Team team : teams) {
+            Hackathon hackathon = getHackathonByTitolo(team.getHackathon().getTitolo());
+            hackathon.addTeam(team);
         }
     }
 
-    private void dumpDatiDocumento() {}
+    private void dumpDatiDocumento() {
+        documenti.addAll(documentoDAO.getTuttiDocumenti());
+        // aggiunta dei Documenti alla lista di documenti dei team
+        for (Documento documento : documenti) {
+            for (Team team : teams) {
+                if (team.getNome().equals(documento.getTeam().getNome()) && team.getHackathon().getTitolo().equals(documento.getTeam().getHackathon().getTitolo())) {
+                    team.addDocumenti(documento);
+                    break;
+                }
+            }
+        }
+        // aggiunta dei Commenti alla lista di commenti dei documenti
+        for (Documento documento : documenti) {
+            documento.addTuttiCommenti(documentoDAO.getTuttiCommentiByDocumento(documento));
+        }
+    }
 
     private void dumpDatiVoto() {
-        Voti.addAll(votoDAO.getTuttiVoti());
-        for (Voto voto : Voti) {
+        voti.addAll(votoDAO.getTuttiVoti());
+        for (Voto voto : voti) {
             // aggiunta dei Voti alla lista di voti assegnati dei giudici
-            Giudice giudice = voto.getGiudice();
-            giudice.getVotiAssegnati().add(voto);
+            Giudice giudice = getGiudiceByEmail(voto.getGiudice().getEmail());
+            giudice.addVotiAssegnati(voto);
             // aggiunta dei Voti alla lista di voti dei team
-            Team team = voto.getTeam();
-            team.getVoti().add(voto);
+            Team team = getTeamByNomeAndHackathon(voto.getTeam().getNome(), voto.getTeam().getHackathon().getTitolo());
+            team.addVoti(voto);
         }
     }
 
     private void dumpDatiConvocazioni() {
-        List<String> emailGiudiciConvocati = utenteDAO.getEmailGiudiciConvocati();
-        for (String email : emailGiudiciConvocati) {
-            Giudice giudice = getGiudiceByEmail(email);
+        for (Giudice giudice :  giudici) {
             // aggiunta degli Hackathon nella lista degli Hackathon assegnati dei giudici
-            List<Hackathon> hackathonAssegnati = giudice.getHackathonAssegnati();
-            hackathonAssegnati.addAll(utenteDAO.getHackathonAssegnatiToGiudice(giudice));
+            for (Hackathon hackathonG : utenteDAO.getHackathonAssegnatiToGiudice(giudice)) {
+                Hackathon hackathon =  getHackathonByTitolo(hackathonG.getTitolo());
+                giudice.addHackathonAssegnati(hackathon);
+            }
             // aggiunta dei Giudici alla lista dei giudici degli Hackathon
-            for (Hackathon hackathon : hackathonAssegnati) {
-                hackathon.getGiudiceList().add(giudice);
+            for (Hackathon hackathon : giudice.getHackathonAssegnati()) {
+                hackathon.addGiudice(giudice);
             }
             // aggiunta degli Organizzatori nella lista degli organizzatori invitanti dei giudici
-            List<Organizzatore> organizzatoriInvitanti = utenteDAO.getOrganizzatoriInvitantiToGiudice(giudice);
-            giudice.getOrganizzatoriInvitanti().addAll(organizzatoriInvitanti);
+            for (Organizzatore organizzatoreG : utenteDAO.getOrganizzatoriInvitantiToGiudice(giudice)) {
+                Organizzatore organizzatore = getOrganizzatoreByEmail(organizzatoreG.getEmail());
+                giudice.addOrganizzatoriInvitanti(organizzatore);
+            }
             // aggiunta dei Giudici alla lista dei giudici convocati degli organizzatori
-            for (Organizzatore organizzatore : organizzatoriInvitanti) {
+            for (Organizzatore organizzatore : giudice.getOrganizzatoriInvitanti()) {
                 organizzatore.getGiudiciConvocati().add(giudice);
             }
         }
     }
 
     private void dumpDatiPartecipazioniAiTeam() {
-        for (Team team : Teams) {
+        for (Team team : teams) {
             // aggiunta dei Concorrenti alla lista dei membri dei team
-            team.getMembri().addAll(teamDAO.getConcorrentiOfTeam(team));
+            for (Concorrente concorrenteT : teamDAO.getConcorrentiOfTeam(team)) {
+                Concorrente concorrente = getConcorrenteByEmail(concorrenteT.getEmail());
+                team.addMembri(concorrente);
+            }
             for (Concorrente concorrente : team.getMembri()) {
                 // aggiunta dei Team alla lista dei team dei concorrenti
-                concorrente.getListTeamAppartenenza().add(team);
+                concorrente.addTeamAppartenenza(team);
             }
         }
     }
 
     private void dumpDatiVotiAssegnati() {
-        for (Giudice giudice : Giudici) {
+        for (Giudice giudice : giudici) {
             for (Hackathon hackathon : giudice.getHackathonAssegnati()) {
                 for (Team team : hackathon.getTeamList()) {
-                    for (Voto voto : team.getVoti()) {
-                        if (voto.getGiudice().equals(giudice)) {
-                            // aggiunta dei Team alla lista dei team giudicati del giudice
-                            giudice.getTeamGiudicati().add(team);
-                        } else {
-                            // aggiunta dei Team alla lista dei team giudicabili del giudice
-                            giudice.getTeamGiudicabili().addAll(hackathon.getTeamList());
-                        }
+                    // aggiunta dei Team alla lista dei team giudicati del giudice
+                    addTeamToListaTeamGiudicatiOfGiudice(team, giudice);
+                    if (!giudice.getTeamGiudicati().contains(team)) {
+                        // aggiunta dei Team alla lista dei team giudicabili del giudice
+                        giudice.addTeamGiudicabili(team);
                     }
                 }
+            }
+        }
+    }
+
+    private void addTeamToListaTeamGiudicatiOfGiudice(Team team, Giudice giudice) {
+        for (Voto voto : team.getVoti()) {
+            if (voto.getGiudice().getEmail().equals(giudice.getEmail())) {
+                // aggiunta dei Team alla lista dei team giudicati del giudice
+                giudice.addTeamGiudicati(team);
             }
         }
     }
@@ -170,13 +198,13 @@ public class Controller {
     // metodi per la classe UtentePiattaforma
 
     public void addUtente(UtentePiattaforma utente) {
-        UtentiPiattaforma.add(utente);
+        utentiPiattaforma.add(utente);
         // inserisci dati nel DB
         utenteDAO.aggiungiUtente(utente);
     }
 
     public List<UtentePiattaforma> getUtentiPiattaformaList() {
-        return UtentiPiattaforma;
+        return utentiPiattaforma;
     }
 
     public UtentePiattaforma getUtentePiattaformaByEmail(String email) {
@@ -196,36 +224,36 @@ public class Controller {
                 if (isConcorrente(email)) {
                     Concorrente concorrente = new Concorrente(nome, cognome, email, pwString);
                     addConcorrente(concorrente);
-                    BenvenutoConcorrente BenvenutoConcorrenteGUI = new BenvenutoConcorrente(frame, email, this);
+                    new BenvenutoConcorrente(frame, email, this);
                     frame.setVisible(false);
                 } else if (isGiudice(email)) {
                     Giudice giudice = new Giudice(nome, cognome, email, pwString);
                     addGiudice(giudice);
-                    BenvenutoGiudice BenvenutoGiudiceGUI = new BenvenutoGiudice(frame, email, this);
+                    new BenvenutoGiudice(frame, email, this);
                     frame.setVisible(false);
                 } else if (isOrganizzatore(email)) {
                     Organizzatore organizzatore = new Organizzatore(nome, cognome, email, pwString);
                     addOrganizzatore(organizzatore);
-                    BenvenutoOrganizzatore BenvenutoOrganizzatoreGUI = new BenvenutoOrganizzatore(frame, email, this);
+                    new BenvenutoOrganizzatore(frame, email, this);
                     frame.setVisible(false);
                 } else {
                     JOptionPane.showMessageDialog(frame,
                             "Indirizzo email non valido",
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Indirizzo email già utilizzato",
-                        "Error page",
+                        EPDEFAULT,
                         JOptionPane.ERROR_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Signup non riuscito",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -238,36 +266,41 @@ public class Controller {
             if (utentePiattaforma != null) {
                 String pwString = new String(pw);
                 if (utentePiattaforma.verificaPassword(pwString)) {
-                    if (isConcorrente(email)) {
-                        BenvenutoConcorrente BenvenutoConcorrenteGUI = new BenvenutoConcorrente(frame, email, this);
-                        frame.setVisible(false);
-                    } else if (isGiudice(email)) {
-                        BenvenutoGiudice BenvenutoGiudiceGUI = new BenvenutoGiudice(frame, email, this);
-                        frame.setVisible(false);
-                    } else { // l'utente è un organizzatore (@organizzatore.com)
-                        BenvenutoOrganizzatore BenvenutoOrganizzatoreGUI = new BenvenutoOrganizzatore(frame, email, this);
-                        frame.setVisible(false);
-                    }
+                    riconoscimentoTipoUtente(frame, utentePiattaforma.getEmail());
                 } else {
                     JOptionPane.showMessageDialog(frame,
                             "Password errata!",
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Utente non registrato",
-                        "Error page",
+                        EPDEFAULT,
                         JOptionPane.ERROR_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Login non riuscito",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
+        }
+    }
+
+    // metodo usato dal metodoLogin
+    private void riconoscimentoTipoUtente(JFrame frame, String email) {
+        if (isConcorrente(email)) {
+            new BenvenutoConcorrente(frame, email, this);
+            frame.setVisible(false);
+        } else if (isGiudice(email)) {
+            new BenvenutoGiudice(frame, email, this);
+            frame.setVisible(false);
+        } else { // l'utente è un organizzatore (@organizzatore.com)
+            new BenvenutoOrganizzatore(frame, email, this);
+            frame.setVisible(false);
         }
     }
 
@@ -295,19 +328,22 @@ public class Controller {
         if (existUtentePiattaforma(emailUtente)) {
             try {
                 List<String> classifica = getHackathonByTitolo(titoloHackathon).getClassifica(getUtentePiattaformaByEmail(emailUtente));
-                ClassificaHackathon ClassificaHackathonGUI = new ClassificaHackathon(frame, classifica, titoloHackathon);
+                if (!classifica.isEmpty()) {
+                    hackathonDAO.setClassificaHackathon(getHackathonByTitolo(titoloHackathon), Arrays.toString(classifica.toArray(new String[0])));
+                }
+                new ClassificaHackathon(frame, classifica, titoloHackathon);
                 frame.setVisible(false);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(frame,
                         e.getMessage(),
-                        "Error page",
+                        EPDEFAULT,
                         JOptionPane.ERROR_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Utente non valido",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -318,12 +354,12 @@ public class Controller {
     // metodi per la classe Organizzatore
 
     public void addOrganizzatore(Organizzatore organizzatore) {
-        Organizzatori.add(organizzatore);
+        organizzatori.add(organizzatore);
         addUtente(organizzatore);
     }
 
     public List<Organizzatore> getOrganizzatoriList() {
-        return Organizzatori;
+        return organizzatori;
     }
 
     public Organizzatore getOrganizzatoreByEmail(String email) {
@@ -369,27 +405,27 @@ public class Controller {
                     addHackathon(hackathon);
                     JOptionPane.showMessageDialog(frame,
                             "Creazione Hackathon: '" + titolo + "' avvenuta con successo",
-                            "Message page",
+                            MPDEFAULT,
                             JOptionPane.INFORMATION_MESSAGE);
                     frame.setVisible(true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(frame,
                             e.getMessage(),
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Creazione Hackathon non riuscita. Valori inseriti non coerenti",
-                        "Warning page",
+                        WPDEFAULT,
                         JOptionPane.WARNING_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Creazione Hackathon non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -397,7 +433,7 @@ public class Controller {
 
     // metodo per la pagina ConvocaGiudice
     public void metodoConvocaGiudice(JFrame frame, String titoloHackathon, String emailGiudice, String emailOrganizzatore) {
-        if (!(titoloHackathon.equals("Seleziona") || emailGiudice.isEmpty())) { // verifica validità dei campi
+        if (!(titoloHackathon.equals(SDEFAULT) || emailGiudice.isEmpty())) { // verifica validità dei campi
             try {
                 Organizzatore organizzatore = getOrganizzatoreByEmail(emailOrganizzatore);
                 Giudice giudice = getGiudiceByEmail(emailGiudice);
@@ -406,20 +442,20 @@ public class Controller {
                 utenteDAO.convocaGiudice(organizzatore, giudice, hackathon);
                 JOptionPane.showMessageDialog(frame,
                         "Convocazione giudice avvenuta con successo",
-                        "Message page",
+                        MPDEFAULT,
                         JOptionPane.INFORMATION_MESSAGE);
                 frame.setVisible(true);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(frame,
                         e.getMessage(),
-                        "Error page",
+                        EPDEFAULT,
                         JOptionPane.ERROR_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Convocazione giudice non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -430,12 +466,12 @@ public class Controller {
     // metodi per la classe Giudice
 
     public void addGiudice(Giudice giudice) {
-        Giudici.add(giudice);
+        giudici.add(giudice);
         addUtente(giudice);
     }
 
     public List<Giudice> getGiudiciList() {
-        return Giudici;
+        return giudici;
     }
 
     public Giudice getGiudiceByEmail(String email) {
@@ -480,29 +516,30 @@ public class Controller {
             if (giudice != null && hackathon != null) {
                 try {
                     hackathon.setDescrizioneProblema(giudice, descrizioneProblema);
+                    hackathonDAO.setDescrizioneHackathon(getHackathonByTitolo(titoloHackathon), descrizioneProblema);
                     JOptionPane.showMessageDialog(frame,
                             "Descrizione problema inserita con successo",
-                            "Message page",
+                            MPDEFAULT,
                             JOptionPane.INFORMATION_MESSAGE);
                     frame.setVisible(true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(frame,
                             e.getMessage(),
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Giudice e/o Hackathon non trovato/i",
-                        "Warning page",
+                        WPDEFAULT,
                         JOptionPane.WARNING_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Nessuna descrizione inserita, operazione di aggiunta non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -510,21 +547,21 @@ public class Controller {
 
     // metodo per la pagina VisionaTeam e GiudicaTeam
     public void metodoVisionaAndOrGiudicaTeam(JFrame frame, String titoloHackathon, String nomeTeam, String emailGiudice) {
-        if (!(titoloHackathon.equals("Seleziona") || nomeTeam.equals("Seleziona"))) { // verifica validità dei campi
+        if (!(titoloHackathon.equals(SDEFAULT) || nomeTeam.equals(SDEFAULT))) { // verifica validità dei campi
             try {
-                PaginaTeam PaginaTeamGUI = new PaginaTeam(frame, nomeTeam, titoloHackathon, emailGiudice, this);
+                new PaginaTeam(frame, nomeTeam, titoloHackathon, emailGiudice, this);
                 frame.setVisible(false);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(frame,
                         e.getMessage(),
-                        "Error page",
+                        EPDEFAULT,
                         JOptionPane.ERROR_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Hackathon e/o giudice non selezionato/i. Operazione di visione/giudizio team non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -542,27 +579,27 @@ public class Controller {
                     addVoto(v);
                     JOptionPane.showMessageDialog(frame,
                             "Votazione: " + voto + " (" + v + ") inserita con successo",
-                            "Message page",
+                            MPDEFAULT,
                             JOptionPane.INFORMATION_MESSAGE);
                     frame.setVisible(true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(frame,
                             e.getMessage(),
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Giudice e/o team non trovato/i",
-                        "Warning page",
+                        WPDEFAULT,
                         JOptionPane.WARNING_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Operazione assegnazione voto non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -577,33 +614,34 @@ public class Controller {
             Giudice giudice = getGiudiceByEmail(emailUtente);
             if (documento != null && team != null && hackathon != null && giudice != null) {
                 try {
-                    if (firma) {
+                    if (Boolean.TRUE.equals(firma)) {
                         commento += "\n(" + giudice.getNome() + " " + giudice.getCognome() + ")";
                     }
                     documento.setCommenti(giudice, commento);
+                    documentoDAO.addCommento(giudice, documento, commento);
                     JOptionPane.showMessageDialog(frame,
                             "Commento inserito con successo",
-                            "Message page",
+                            MPDEFAULT,
                             JOptionPane.INFORMATION_MESSAGE);
                     frame.setVisible(true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(frame,
                             e.getMessage(),
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Documento/team/giudice/Hackathon non trovato/i",
-                        "Warning page",
+                        WPDEFAULT,
                         JOptionPane.WARNING_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Nessun commento inserito, operazione di aggiunta non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -614,12 +652,12 @@ public class Controller {
     // metodi per la classe Concorrente
 
     public void addConcorrente(Concorrente concorrente) {
-        Concorrenti.add(concorrente);
+        concorrenti.add(concorrente);
         addUtente(concorrente);
     }
 
     public List<Concorrente> getConcorrentiList() {
-        return Concorrenti;
+        return concorrenti;
     }
 
     public Concorrente getConcorrenteByEmail(String email) {
@@ -634,7 +672,7 @@ public class Controller {
     // metodo per la pagina CreaTeam
     public void metodoCreaTeam(JFrame frame,String titoloHackathon, String nomeTeam, char[] pwTeam, String emailConcorrente) {
         String pwTeamString = new String(pwTeam);
-        if (!(titoloHackathon.equals("Seleziona") || nomeTeam.isEmpty() || pwTeamString.isEmpty())) {
+        if (!(titoloHackathon.equals(SDEFAULT) || nomeTeam.isEmpty() || pwTeamString.isEmpty())) {
             Concorrente concorrente = getConcorrenteByEmail(emailConcorrente);
             Hackathon hackathon = getHackathonByTitolo(titoloHackathon);
             if (concorrente != null && hackathon != null) {
@@ -642,30 +680,32 @@ public class Controller {
                     Team team = concorrente.creaTeam(nomeTeam, pwTeamString, hackathon);
                     addTeam(team);
                     utenteDAO.partecipaTeam(concorrente, nomeTeam, titoloHackathon);
+                    // incremento dei team nell'Hackathon
+                    hackathonDAO.incrementaTeam(titoloHackathon);
                     JOptionPane.showMessageDialog(frame,
                             "Creazione team avvenuta con successo",
-                            "Message page",
+                            MPDEFAULT,
                             JOptionPane.INFORMATION_MESSAGE);
-                    PaginaTeam PaginaTeamGUI = new PaginaTeam(frame, nomeTeam, titoloHackathon, emailConcorrente, this);
+                    new PaginaTeam(frame, nomeTeam, titoloHackathon, emailConcorrente, this);
                     frame.setVisible(false);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(frame,
                             e.getMessage(),
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Concorrente e/o Hackathon non trovato/i",
-                        "Warning page",
+                        WPDEFAULT,
                         JOptionPane.WARNING_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Creazione team non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -674,32 +714,34 @@ public class Controller {
     // metodo per la pagina PartecipaTeam
     public void metodoPartecipaTeam(JFrame frame, String titoloHackathon, String nomeTeam, char[] pwTeam, String emailConcorrente) {
         String pwTeamString = new String(pwTeam);
-        if (!(titoloHackathon.equals("Seleziona") || nomeTeam.equals("Seleziona") || pwTeamString.isEmpty())) { // verifica validità dei campi
+        if (!(titoloHackathon.equals(SDEFAULT) || nomeTeam.equals(SDEFAULT) || pwTeamString.isEmpty())) { // verifica validità dei campi
             Concorrente concorrente = getConcorrenteByEmail(emailConcorrente);
             if (concorrente != null) {
                 try {
                     concorrente.partecipaTeam(nomeTeam, pwTeamString, getHackathonByTitolo(titoloHackathon));
                     utenteDAO.partecipaTeam(concorrente, nomeTeam, titoloHackathon);
-                    PaginaTeam PaginaTeamGUI = new PaginaTeam(frame, nomeTeam, titoloHackathon, emailConcorrente, this);
+                    // incremento dei team nell'Hackathon
+                    hackathonDAO.incrementaTeam(titoloHackathon);
+                    new PaginaTeam(frame, nomeTeam, titoloHackathon, emailConcorrente, this);
                     frame.setVisible(false);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(frame,
                             e.getMessage(),
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Concorrente non trovato",
-                        "Warning page",
+                        WPDEFAULT,
                         JOptionPane.WARNING_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Partecipazione al team non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -707,39 +749,39 @@ public class Controller {
 
     // metodo per la pagina AccediTeam
     public void metodoAccediTeam(JFrame frame, String titoloHackathon, String nomeTeam, String emailConcorrente) {
-        if (!(titoloHackathon.equals("Seleziona") || nomeTeam.equals("Seleziona"))) { // verifica validità dei campi
+        if (!(titoloHackathon.equals(SDEFAULT) || nomeTeam.equals(SDEFAULT))) { // verifica validità dei campi
             Concorrente concorrente = getConcorrenteByEmail(emailConcorrente);
             Team team = getTeamByNomeAndHackathon(nomeTeam, titoloHackathon);
             if (concorrente != null && team != null) {
                 try {
                     concorrente.accediTeam(team);
-                    PaginaTeam PaginaTeamGUI = new PaginaTeam(frame, nomeTeam, titoloHackathon, emailConcorrente, this);
+                    new PaginaTeam(frame, nomeTeam, titoloHackathon, emailConcorrente, this);
                     frame.setVisible(false);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(frame,
                             e.getMessage(),
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Concorrente e/o team non trovato/i",
-                        "Warning page",
+                        WPDEFAULT,
                         JOptionPane.WARNING_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Accesso al team non riuscito",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
     }
 
     // metodo per la pagina AggiungiDocumento
-    public void metodoAggiungiDocumento(JFrame frame, File fileSelezionato, String nomeTeam, String titoloHackathon) {
+    public void metodoAggiungiDocumento(JFrame frame, String fileSelezionato, String nomeTeam, String titoloHackathon) {
         if (fileSelezionato != null) { // verifica validità dei campi
             Team team = getTeamByNomeAndHackathon(nomeTeam, titoloHackathon);
             if (team != null) {
@@ -747,28 +789,28 @@ public class Controller {
                     team.aggiungiDocumento(setFileInDocumento(fileSelezionato, team));
                     addDocumento(setFileInDocumento(fileSelezionato, team));
                     JOptionPane.showMessageDialog(frame,
-                            "File " + fileSelezionato.getName() + " aggiunto con successo",
-                            "Message page",
+                            "File " + fileSelezionato + " aggiunto con successo",
+                            MPDEFAULT,
                             JOptionPane.INFORMATION_MESSAGE);
                     frame.setVisible(true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(frame,
                             e.getMessage(),
-                            "Error page",
+                            EPDEFAULT,
                             JOptionPane.ERROR_MESSAGE);
                     frame.setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame,
                         "Team non trovato",
-                        "Warning page",
+                        WPDEFAULT,
                         JOptionPane.WARNING_MESSAGE);
                 frame.setVisible(true);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Nessun file selezionato, operazione di inserimento non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(false);
         }
@@ -776,13 +818,13 @@ public class Controller {
 
     // metodo per la pagina VisualizzaDocumenti
     public void metodoVisualizzaDocumenti(JFrame frame, String percorsoFile, String nomeTeam, String titoloHackathon, String emailUtente) {
-        if (percorsoFile != null && !percorsoFile.equals("Seleziona")) { // verifica validità dei campi
-            PaginaDocumento PaginaDocumentoGUI = new PaginaDocumento(frame, percorsoFile, nomeTeam, titoloHackathon, emailUtente, this);
+        if (percorsoFile != null && !percorsoFile.equals(SDEFAULT)) { // verifica validità dei campi
+            new PaginaDocumento(frame, percorsoFile, nomeTeam, titoloHackathon, emailUtente, this);
             frame.setVisible(false);
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Seleziona un documento valido",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -792,7 +834,7 @@ public class Controller {
     // metodi per la classe Hackathon
 
     public void addHackathon(Hackathon hackathon) {
-        Hackathons.add(hackathon);
+        hackathons.add(hackathon);
         // inserisci dati nel DB
         hackathonDAO.aggiungiHackathon(hackathon);
     }
@@ -807,7 +849,7 @@ public class Controller {
     }
 
     public List<Hackathon> getHackathonsList() {
-        return Hackathons;
+        return hackathons;
     }
 
     public boolean existHackathon(String titolo) {
@@ -857,13 +899,13 @@ public class Controller {
 
     // metodo per la pagina SelezionaHackathon
     public void metodoSelezionaHackathon(JFrame frame, String titolo, String emailUtente) {
-        if (!titolo.equals("Seleziona")) { // verifica validità dei campi
-            PaginaHackathon PaginaHackathonGUI = new PaginaHackathon(frame, emailUtente, titolo, this);
+        if (!titolo.equals(SDEFAULT)) { // verifica validità dei campi
+            new PaginaHackathon(frame, emailUtente, titolo, this);
             frame.setVisible(false);
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Nessun Hackathon selezionato. Ricerca non riuscita",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
             frame.setVisible(true);
         }
@@ -874,75 +916,71 @@ public class Controller {
     // metodi per la classe Team
 
     public void addTeam(Team team) {
-        Teams.add(team);
+        teams.add(team);
         // aggiungi dati nel DB
         teamDAO.aggiungiTeam(team);
     }
 
     public List<Team> getTeamsList() {
-        return Teams;
+        return teams;
     }
 
     public List<String> getListaNomiTeamGiudicabiliByGiudiceAndHackathon(String emailUtente, String titoloHackathon) {
+        List<String> listNomeTeam = new ArrayList<>();
         if (!emailUtente.isEmpty() && !titoloHackathon.isEmpty()) {
             Giudice giudice = getGiudiceByEmail(emailUtente);
             Hackathon hackathon = getHackathonByTitolo(titoloHackathon);
             if (giudice != null && hackathon != null) {
-                List<String> listNomeTeam = new ArrayList<>();
                 for (Team team : hackathon.getTeamList()) {
                     if (giudice.getTeamGiudicabili().contains(team)) {
                         listNomeTeam.add(team.getNome());
                     }
                 }
-                return listNomeTeam;
             }
         }
-        return null;
+        return listNomeTeam;
     }
 
     public List<String> getListaNomiTeamGiudicabiliByGiudice(String emailUtente) {
+        List<String> listNomeTeam = new ArrayList<>();
         if (!emailUtente.isEmpty()) {
             Giudice giudice = getGiudiceByEmail(emailUtente);
             if (giudice != null) {
-                List<String> listNomeTeam = new ArrayList<>();
                 for (Team team : giudice.getTeamGiudicabili()) {
                     listNomeTeam.add(team.getNome());
                 }
-                return listNomeTeam;
             }
         }
-        return null;
+        return listNomeTeam;
     }
 
     public List<String> getListaNomiTeamGiudicatiByGiudiceAndHackathon(String emailUtente, String titoloHackathon) {
+        List<String> listNomeTeam = new ArrayList<>();
         if (!(emailUtente.isEmpty() && titoloHackathon.isEmpty())) {
             Giudice giudice = getGiudiceByEmail(emailUtente);
             Hackathon hackathon = getHackathonByTitolo(titoloHackathon);
             if (giudice != null && hackathon != null) {
-                List<String> listNomeTeam = new ArrayList<>();
                 for (Team team : hackathon.getTeamList()) {
                     if (giudice.getTeamGiudicati().contains(team)) {
                         listNomeTeam.add(team.getNome());
                     }
                 }
-                return listNomeTeam;
             }
         }
-        return null;
+        return listNomeTeam;
     }
 
     public List<String> getListaNomiTeamGiudicatiByGiudice(String emailUtente) {
+        List<String> listNomeTeam = new ArrayList<>();
         if (!emailUtente.isEmpty()) {
             Giudice giudice = getGiudiceByEmail(emailUtente);
             if (giudice != null) {
-                List<String> listNomeTeam = new ArrayList<>();
                 for (Team team : giudice.getTeamGiudicati()) {
                     listNomeTeam.add(team.getNome());
                 }
-                return listNomeTeam;
             }
         }
-        return null;
+        return listNomeTeam;
     }
 
     public Team getTeamByNomeAndHackathon(String nome, String titoloHackathon) {
@@ -959,41 +997,41 @@ public class Controller {
     }
 
     public List<String> getListaNominativiMembriByTeam(String nome, String titoloHackathon) {
+        List<String> listMembri = new ArrayList<>();
         if (!(nome.isEmpty() && !titoloHackathon.isEmpty())) {
             Team team = getTeamByNomeAndHackathon(nome, titoloHackathon);
             if (team != null) {
-                List<String> listMembri = new ArrayList<>();
                 for (Concorrente membro : team.getMembri()) {
                     listMembri.add(membro.getNome() + " " + membro.getCognome());
                 }
-                return listMembri;
             }
         }
-        return null;
+        return listMembri;
     }
 
-    public List<String> getListaDocumentiByTeam(String nome, String titoloHackathon){
+    public List<String> getListaDocumentiByTeam(String nome, String titoloHackathon) {
+        List<String> listDocumento = new ArrayList<>();
         if (!(nome.isEmpty() && !titoloHackathon.isEmpty())) {
             Team team = getTeamByNomeAndHackathon(nome, titoloHackathon);
-            List<String> listDocumento = new ArrayList<>();
             for (Team t : getTeamsList()) {
                 if (t.equals(team)) {
                     for (Documento documento : team.getDocumenti())
-                        listDocumento.add(documento.getFile().getAbsolutePath());
+                        listDocumento.add(documento.getNomeFile());
                 }
             }
-            return listDocumento;
         }
-        return null;
+        return listDocumento;
     }
 
     public boolean isTeamGiudicabileByGiudice(String nomeTeam, String titoloHackathon, String emailUtente) {
-        if (!(nomeTeam.isEmpty() && titoloHackathon.isEmpty() && emailUtente.isEmpty())) {
+        if (!(nomeTeam.isEmpty() || titoloHackathon.isEmpty() || emailUtente.isEmpty())) {
             Team team = getTeamByNomeAndHackathon(nomeTeam, titoloHackathon);
             List<String> nomiTeamGiudicabiliList = getListaNomiTeamGiudicabiliByGiudiceAndHackathon(emailUtente, titoloHackathon);
-            for (String nome : nomiTeamGiudicabiliList) {
-                if (getTeamByNomeAndHackathon(nome, titoloHackathon).equals(team)) {
-                    return true;
+            if (nomiTeamGiudicabiliList != null) {
+                for (String nome : nomiTeamGiudicabiliList) {
+                    if (getTeamByNomeAndHackathon(nome, titoloHackathon).equals(team)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -1016,17 +1054,17 @@ public class Controller {
     // metodi per la classe Documento
 
     public void addDocumento(Documento documento) {
-        Documenti.add(documento);
+        documenti.add(documento);
         // aggiungi dati nel DB
-        //documentoDAO.aggiungiDocumento(documento);
+        documentoDAO.aggiungiDocumento(documento);
     }
 
-    public Documento setFileInDocumento(File file, Team team) {
-        return new Documento(file, team);
+    public Documento setFileInDocumento(String nomeFile, Team team) {
+        return new Documento(nomeFile, team);
     }
 
     public LocalDate getDataDocumento(String fileSelezionato, String nomeTeam, String titoloHackathon) {
-        if (!(fileSelezionato.isEmpty() &&  nomeTeam.isEmpty() && titoloHackathon.isEmpty())) {
+        if (!(fileSelezionato.isEmpty() && nomeTeam.isEmpty() && titoloHackathon.isEmpty())) {
             Documento documento = getDocumentoByTeam(fileSelezionato, nomeTeam, titoloHackathon);
             if (documento != null) {
                 return documento.getDataAggiornamento();
@@ -1039,9 +1077,9 @@ public class Controller {
         if (!(nomeTeam.isEmpty() && titoloHackathon.isEmpty())) {
             Team team = getTeamByNomeAndHackathon(nomeTeam, titoloHackathon);
             if  (team != null) {
-                List<Documento> documenti = team.getDocumenti();
-                for (Documento documento : documenti) {
-                    if (documento.getFile().getAbsolutePath().equals(fileSelezionato)) {
+                List<Documento> documentiList = team.getDocumenti();
+                for (Documento documento : documentiList) {
+                    if (documento.getNomeFile().equals(fileSelezionato)) {
                         return documento;
                     }
                 }
@@ -1057,41 +1095,33 @@ public class Controller {
               return new ArrayList<>(documento.getCommenti());
             }
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public void apriDocumento(JFrame frame, String percorsoFile) {
-        if (percorsoFile != null && !percorsoFile.equals("Seleziona")) {
-            File file = new File(percorsoFile); // ricavo il file dal suo percorso
-            if (file.exists()) {
-                try {
-                    // apertura file in base al sistema operativo
-                    String os = System.getProperty("os.name").toLowerCase();
-                    ProcessBuilder pb;
-                    if (os.contains("win")) {
-                        pb = new ProcessBuilder("cmd", "/c", "start", "\"\"", file.getAbsolutePath());
-                    } else if (os.contains("mac")) {
-                        pb = new ProcessBuilder("open", file.getAbsolutePath());
-                    } else { // Linux/Unix
-                        pb = new ProcessBuilder("xdg-open", file.getAbsolutePath());
-                    }
-                    pb.start();
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(frame,
-                            "Errore nell'aprire il file: " + e.getMessage(),
-                            "Error page",
-                            JOptionPane.ERROR_MESSAGE);
+        if (percorsoFile != null && !percorsoFile.equals(SDEFAULT)) {
+            try {
+                // apertura file in base al sistema operativo
+                String os = System.getProperty("os.name").toLowerCase();
+                ProcessBuilder pb;
+                if (os.contains("win")) {
+                    pb = new ProcessBuilder("cmd", "/c", "start", "\"\"", percorsoFile);
+                } else if (os.contains("mac")) {
+                    pb = new ProcessBuilder("open", percorsoFile);
+                } else { // Linux/Unix
+                    pb = new ProcessBuilder("xdg-open", percorsoFile);
                 }
-            } else {
+                pb.start();
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(frame,
-                        "Il file selezionato non esiste: " + file.getAbsolutePath(),
-                        "Error page",
+                        "Errore nell'aprire il file: " + e.getMessage(),
+                        EPDEFAULT,
                         JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(frame,
                     "Seleziona un documento valido",
-                    "Warning page",
+                    WPDEFAULT,
                     JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -1101,9 +1131,13 @@ public class Controller {
     // metodi per la classe Voto
 
     public void addVoto(Voto voto) {
-        Voti.add(voto);
+        voti.add(voto);
+        // incremento dei Voti all'Hackathon che li ha ricevuti
+        Hackathon hackathon = getHackathonByTitolo(voto.getTeam().getHackathon().getTitolo());
+        hackathon.addNumVotiAssegnati();
         // aggiungi dati nel DB
         votoDAO.aggiungiVoto(voto);
+        hackathonDAO.incrementaVoti(voto.getTeam().getHackathon().getTitolo());
     }
 
     /* ************************************************************************** */

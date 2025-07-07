@@ -1,4 +1,4 @@
-package implementazionePostgresDAO;
+package implementazione_postgres_dao;
 
 import dao.TeamDAO;
 import model.Concorrente;
@@ -14,6 +14,7 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
 
     private final Connection connessione;
 
+    // Costruttore
     public TeamImplementazionePostgresDAO(Connection connessione) {
         this.connessione = connessione;
     }
@@ -28,12 +29,9 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
             stmt.setString(4, team.getCreatore().getEmail());
 
             stmt.executeUpdate();
-            System.out.println("Team inserito con successo.");
         } catch (SQLException e) {
-            System.out.println("Errore durante l'inserimento del team:");
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile aggiungere il team: " + team.getNome() + " per l''Hackathon: " + team.getHackathon().getTitolo(), e);
         }
-
     }
 
     @Override
@@ -59,9 +57,8 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
                 lista.add(team);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB i team", e);
         }
-
         return lista;
     }
 
@@ -74,7 +71,7 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                // Ricostruisci l'oggetto Hackathon con tutti i dati
+                // ricostruisci l'oggetto Hackathon con tutti i dati
                 String emailOrganizzatore = rs.getString("creatore");
                 Organizzatore organizzatore = getOrganizzatoreByEmail(emailOrganizzatore);
                 hackathon = new Hackathon(
@@ -94,7 +91,7 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
                 );
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB l'Hackathon: " + titolo, e);
         }
         return hackathon;
     }
@@ -113,7 +110,7 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
                 );
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB l'organizzatore con email: " + email, e);
         }
         return null;
     }
@@ -132,14 +129,14 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
                 );
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB il concorrente con email: " + email, e);
         }
         return null;
     }
 
     public List<Concorrente> getConcorrentiOfTeam(Team team) {
         List<Concorrente> membri = new ArrayList<>();
-        String sql = "SELECT emailconcorrente FROM concorrenteteam WHERE nometeam = ? AND titolohackathon = ?";
+        String sql = "SELECT emailconcorrente FROM concorrente_team WHERE nometeam = ? AND titolohackathon = ?";
         try (PreparedStatement ps = connessione.prepareStatement(sql)) {
             ps.setString(1, team.getNome());
             ps.setString(2, team.getHackathon().getTitolo());
@@ -149,8 +146,8 @@ public class TeamImplementazionePostgresDAO implements TeamDAO {
                 membri.add(c);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Impossibile prelevare dal DB i concorrenti del team: " + team.getNome(), e);
         }
-        return null;
+        return membri;
     }
 }

@@ -31,17 +31,6 @@ public class UtentePiattaforma {
     public String getPw() { return pw; }
     public String getRuolo() { return ruolo; }
 
-    // metodo per visualizzare la classifica di un determinato Hackathon
-    public void visualizzaClassifica(Hackathon hackathon) {
-        // verifica che l'Hackathon esista
-        if (hackathon == null) {
-            System.out.println("Nessun Hackathon selezionato!");
-            return;
-        }
-        System.out.println("=== Classifica di " + hackathon.getTitolo() + " ===");
-        System.out.println(hackathon.getClassifica(this));
-    }
-
     // metodo per verificare la password senza esportarla
     public boolean verificaPassword(String passwordInserita) {
         return this.pw.equals(passwordInserita);

@@ -5,9 +5,10 @@ import  controller.Controller;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 
 public class PaginaHackathon {
-    public JFrame frame;
+    private static JFrame frame;
     private JPanel panel1;
     private JLabel labelNomeHackathon;
     private JLabel labelStatoGara;
@@ -32,9 +33,9 @@ public class PaginaHackathon {
     private JButton viewRankButton;
 
     public PaginaHackathon(JFrame frameChiamante, String emailUtente, String titoloHackathon, Controller controller) {
-        frame = new JFrame("Hackathon");
+        new JFrame("Hackathon");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
@@ -60,20 +61,12 @@ public class PaginaHackathon {
         textAreaDescrizione.setText(controller.getHackathonByTitolo(titoloHackathon).getDescrizioneProblema());
         textAreaDescrizione.setEditable(false);
 
-        // verifica possibilità di visualizzare la descrizione del problema (visibile in qualsiasi momento ma solo dai giudici e organizzatore)
-        // oppure (non visibile nel periodo che va da "iscrizioni terminate" a prima dell'inizio della gara, ossia il periodo in cui viene inserita dai giudici)
-        if (controller.isGiudice(emailUtente) || controller.isOrganizzatore(emailUtente)) {
-            if (textAreaDescrizione.getText().isEmpty()) {
-                textAreaDescrizione.setText("*ASSENTE*\nInserire la descrizione prima dell'inizio gara");
-            }
-        } else if (controller.getHackathonByTitolo(titoloHackathon).verificaStatoGara("Iscrizioni terminate. In attesa dell'inizio della gara")) {
-            textAreaDescrizione.setText("Non ancora disponibile");
-        }
+        verificaDescrizioneProblema(controller, emailUtente, titoloHackathon);
 
         joinWithATeamButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PartecipaTeam PartecipaTeamGUI = new PartecipaTeam(frame, emailUtente, controller);
+                new PartecipaTeam(frame, emailUtente, controller);
                 frame.setVisible(false);
             }
         });
@@ -81,15 +74,12 @@ public class PaginaHackathon {
         joinWithNewTeamButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CreaTeam CreaTeamGUI = new CreaTeam(frame, emailUtente, controller);
+                new CreaTeam(frame, emailUtente, controller);
                 frame.setVisible(false);
             }
         });
 
-        // verifica possibilità di iscrizione all'Hackathon (durante il periodo di iscrizioni e solo per i concorrenti)
-        if (!(controller.getHackathonByTitolo(titoloHackathon).statoGara().equals("Iscrizioni aperte") && emailUtente.toLowerCase().contains("@concorrente.com"))) {
-            panelUtente.setVisible(false);
-        }
+        verificaIscrizioneHackathon(controller, emailUtente, titoloHackathon);
 
         confirmButton.addActionListener(new ActionListener() {
             @Override
@@ -105,11 +95,53 @@ public class PaginaHackathon {
         judgeTeamButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GiudicaTeam GiudicaTeamGUI = new GiudicaTeam(frame, emailUtente, controller);
+                new GiudicaTeam(frame, emailUtente, controller);
                 frame.setVisible(false);
             }
         });
 
+        verificaGiudice(controller, emailUtente, titoloHackathon);
+
+        addJudgeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ConvocaGiudice(frame, emailUtente, controller);
+                frame.setVisible(false);
+            }
+        });
+
+        verificaConvocazioneGiudcie(controller, emailUtente, titoloHackathon);
+
+        viewRankButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.metodoVisualizzaClassifica(frame, titoloHackathon, emailUtente);
+            }
+        });
+
+        verificaVisualizzaClassifica(controller, titoloHackathon);
+    }
+
+    private void verificaDescrizioneProblema(Controller controller, String emailUtente, String titoloHackathon) {
+        // verifica possibilità di visualizzare la descrizione del problema (visibile in qualsiasi momento ma solo dai giudici e organizzatore)
+        // oppure (non visibile fino all'inizio della gara, ossia il periodo in cui viene creato l'Hackathon e quando viene inserita dai giudici)
+        if (controller.isGiudice(emailUtente) || controller.isOrganizzatore(emailUtente)) {
+            if (textAreaDescrizione.getText().isEmpty()) {
+                textAreaDescrizione.setText("*ASSENTE*\nInserire la descrizione prima dell'inizio gara");
+            }
+        } else if (LocalDate.now().isBefore(controller.getHackathonByTitolo(titoloHackathon).getDataInizio())) {
+            textAreaDescrizione.setText("Non ancora disponibile");
+        }
+    }
+
+    private void verificaIscrizioneHackathon(Controller controller, String emailUtente,  String titoloHackathon) {
+        // verifica possibilità di iscrizione all'Hackathon (durante il periodo di iscrizioni e solo per i concorrenti)
+        if (!(controller.getHackathonByTitolo(titoloHackathon).verificaStatoGara("Iscrizioni aperte") && controller.isConcorrente(emailUtente))) {
+            panelUtente.setVisible(false);
+        }
+    }
+
+    private void verificaGiudice(Controller controller, String emailUtente, String titoloHackathon) {
         // verifica possibilità di fare azioni solo per i giudici assegnati (inserire descrizione problema Hackathon, giudicare team)
         if (controller.isGiudice(emailUtente)) {
             if (controller.getListaTitoliHackathonAssegnatiToGiudice(emailUtente).contains(titoloHackathon)) {
@@ -129,27 +161,16 @@ public class PaginaHackathon {
             panelGiudice.setVisible(false);
             judgeTeamButton.setVisible(false);
         }
+    }
 
-        addJudgeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ConvocaGiudice ConvocaGiudiceGUI = new ConvocaGiudice(frame, emailUtente, controller);
-                frame.setVisible(false);
-            }
-        });
-
+    private void verificaConvocazioneGiudcie(Controller controller, String emailUtente, String titoloHackathon) {
         // verifica possibilità di convocare giudice (prima dell'inizio delle iscrizioni e solo per l'organizzatore)
         if (!(controller.getHackathonByTitolo(titoloHackathon).statoGara().equals("Iscrizioni non ancora aperte") && emailUtente.toLowerCase().contains("@organizzatore.com"))) {
             addJudgeButton.setVisible(false);
         }
+    }
 
-        viewRankButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.metodoVisualizzaClassifica(frame, titoloHackathon, emailUtente);
-            }
-        });
-
+    private void verificaVisualizzaClassifica(Controller controller, String titoloHackathon) {
         // verifica possibilità di visualizzazione classifica (solo in fase di gara conclusa e valutata)
         if (!controller.getHackathonByTitolo(titoloHackathon).verificaStatoGara("Valutata")) {
             viewRankButton.setVisible(false);

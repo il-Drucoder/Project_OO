@@ -7,18 +7,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SelezionaHackathon {
-    public JFrame frame;
+    private static final String SDEFAULT = "Seleziona";
+    private static JFrame frame;
     private JPanel panel1;
-    private JComboBox comboBoxTitoloHackathon;
+    private JComboBox<String> comboBoxTitoloHackathon;
     private JButton okButton;
     private JButton cancelButton;
 
     public SelezionaHackathon(JFrame frameChiamante, String emailUtente, List<String> listaTitoliHackathon, Controller controller) {
-        frame = new JFrame("Ricerca Hackathon");
+        new JFrame("Ricerca Hackathon");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
@@ -32,14 +34,15 @@ public class SelezionaHackathon {
 
         // comboBox Hackathon con default
         List<String> hackathonList = new ArrayList<>();
-        hackathonList.add("Seleziona");
+        hackathonList.add(SDEFAULT);
         hackathonList.addAll(listaTitoliHackathon);
         comboBoxTitoloHackathon.setModel(new DefaultComboBoxModel<>(hackathonList.toArray(new String[0])));
 
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.metodoSelezionaHackathon(frame, comboBoxTitoloHackathon.getSelectedItem().toString(), emailUtente);
+                String hackathonSelezionato = Objects.toString(comboBoxTitoloHackathon.getSelectedItem(), SDEFAULT);
+                controller.metodoSelezionaHackathon(frame, hackathonSelezionato, emailUtente);
                 azzeraCampi();
             }
         });

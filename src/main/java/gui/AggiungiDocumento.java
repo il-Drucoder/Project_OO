@@ -8,18 +8,17 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 public class AggiungiDocumento extends JFrame {
-    public JFrame frame;
+    private static JFrame frame;
     private JPanel panel1;
     private JTextField filePercorsoFile;
     private JButton browseButton;
     private JButton okButton;
     private JButton cancelButton;
-    private File fileSelezionato;
 
     public AggiungiDocumento(JFrame frameChiamante, String nomeTeam, String titoloHackathon, Controller controller) {
-        frame = new JFrame("Aggiungi documento");
+        new JFrame("Aggiungi documento");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
@@ -45,7 +44,7 @@ public class AggiungiDocumento extends JFrame {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.metodoAggiungiDocumento(frame, fileSelezionato, nomeTeam, titoloHackathon);
+                controller.metodoAggiungiDocumento(frame, filePercorsoFile.toString(), nomeTeam, titoloHackathon);
                 filePercorsoFile.setText("");
             }
         });
@@ -67,8 +66,7 @@ public class AggiungiDocumento extends JFrame {
         int result = fileChooser.showOpenDialog(this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            fileSelezionato = fileChooser.getSelectedFile();
-            filePercorsoFile.setText(fileSelezionato.getAbsolutePath());
+            filePercorsoFile.setText(fileChooser.getSelectedFile().getAbsolutePath());
         }
     }
 }

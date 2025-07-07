@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 public class Login {
-    public JFrame frame;
+    private static JFrame frame;
     private JPanel panel1;
     private JTextField fieldEmailUtente;
     private JPasswordField fieldPassword;
@@ -16,9 +16,9 @@ public class Login {
     private JButton cancelButton;
 
     public Login(JFrame frameChiamante, Controller controller) {
-        frame = new JFrame("Login");
+        new JFrame("Login");
         frame.setContentPane(panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
