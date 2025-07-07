@@ -31,7 +31,7 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
             stmt.setString(4, utente.getPw());
             stmt.setString(5, utente.getRuolo());
 
-            stmt.executeUpdate(); // esegue l'inserimento nel db
+            stmt.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Impossibile aggiungere l'utente " + utente.getCognome() + " " + utente.getNome(), e);
         }
@@ -73,7 +73,7 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
             stmt.setString(2, giudice.getEmail());
             stmt.setString(3, hackathon.getTitolo());
 
-            stmt.executeUpdate(); // esegue l'inserimento nel db
+            stmt.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Impossibile aggiungere la convocazione effettuata dall'organizzatore: " + organizzatore.getCognome() + " " + organizzatore.getNome() + "verso il giudice: " + giudice.getCognome() + " " + giudice.getNome(), e);
         }
@@ -82,16 +82,19 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
     @Override
     public List<Hackathon> getHackathonAssegnatiToGiudice(Giudice giudice) {
         List<Hackathon> lista = new ArrayList<>();
-        String sql = "SELECT DISTINCT titolohackathon FROM convocazione";
+        String sql = "SELECT DISTINCT titolohackathon FROM convocazione WHERE emailgiudice = ?";
 
-        try (Statement stmt = connessione.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                Hackathon h = getHackathonByTitolo(rs.getString("titolohackathon"));
-                lista.add(h);
+        try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
+            stmt.setString(1, giudice.getEmail());
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Hackathon h = getHackathonByTitolo(rs.getString("titolohackathon"));
+                    lista.add(h);
+                }
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("Impossibile prelevare dal DB la lista di Hackathon assegnati al giudice: " + giudice.getCognome() + " " + giudice.getNome(), e);
+            throw new IllegalStateException("Impossibile prelevare dal DB la lista di Hackathon assegnati al giudice: " +
+                    giudice.getCognome() + " " + giudice.getNome(), e);
         }
         return lista;
     }
@@ -152,16 +155,19 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
     @Override
     public List<Organizzatore> getOrganizzatoriInvitantiToGiudice(Giudice giudice) {
         List<Organizzatore> lista = new ArrayList<>();
-        String sql = "SELECT DISTINCT emailorganizzatore FROM convocazione";
+        String sql = "SELECT DISTINCT emailorganizzatore FROM convocazione WHERE emailgiudice = ?";
 
-        try (Statement stmt = connessione.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                Organizzatore o = getOrganizzatoreByEmail(rs.getString("emailorganizzatore"));
-                lista.add(o);
+        try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
+            stmt.setString(1, giudice.getEmail()); // Presupponendo che esista il metodo getEmail()
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Organizzatore o = getOrganizzatoreByEmail(rs.getString("emailorganizzatore"));
+                    lista.add(o);
+                }
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("Impossibile prelevare dal DB gli organizzatori invitanti il giudice : " + giudice.getCognome() + " " + giudice.getNome(), e);
+            throw new IllegalStateException("Impossibile prelevare dal DB gli organizzatori invitanti il giudice: " +
+                    giudice.getCognome() + " " + giudice.getNome(), e);
         }
         return lista;
     }
@@ -179,7 +185,7 @@ public class  UtentePiattaformaImplementazionePostgresDAO implements UtentePiatt
             stmt.setString(2, nomeTeam);
             stmt.setString(3, titoloHackathon);
 
-            stmt.executeUpdate(); // esegue l'inserimento nel db
+            stmt.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Impossibile aggiungere la partecipazione del concorrente: " + concorrente.getCognome() + " " + concorrente.getCognome() + " al team: " + nomeTeam + " dell'Hackathon: " + titoloHackathon, e);
         }

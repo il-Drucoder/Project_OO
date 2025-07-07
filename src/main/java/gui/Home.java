@@ -11,13 +11,12 @@ public class Home {
     private JPanel panel1;
     private JButton loginButton;
     private JButton signupButton;
-    private static JFrame frameHome;
+    private static final JFrame frameHome = new JFrame("Home");
 
     private static Controller controller;
 
     public static void main(String[] args) {
         try {
-            new JFrame("Home");
             frameHome.setContentPane(new Home().panel1);
             frameHome.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             frameHome.pack();

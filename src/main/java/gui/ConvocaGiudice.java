@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class ConvocaGiudice {
     private static final String SDEFAULT = "Seleziona";
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Convoca giudice");
     private JPanel panel1;
     private JComboBox<String> comboBoxEmailGiudice;
     private JComboBox<String> comboBoxTitoloHackathon;
@@ -19,7 +19,6 @@ public class ConvocaGiudice {
     private JButton cancelButton;
 
     public ConvocaGiudice(JFrame frameChiamante, String emailOrganizzatore, Controller controller) {
-        new JFrame("Convoca giudice");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

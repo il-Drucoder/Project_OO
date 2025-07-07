@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class CreaTeam {
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Crea team");
     private JPanel panel1;
     private JComboBox<String> comboBoxTitoloHackathon;
     private JTextField fieldNomeTeam;
@@ -20,7 +20,6 @@ public class CreaTeam {
     private JButton cancelButton;
 
     public CreaTeam(JFrame frameChiamante, String emailConcorrente, Controller controller) {
-        new JFrame("Crea team");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

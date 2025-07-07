@@ -40,7 +40,7 @@ public class VotoImplementazionePostgresDAO implements VotoDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Giudice giudice = getGiudiceByEmail(rs.getString("emailgiudice"));
-                Team team = getTeamByNomeAndHackathon(rs.getString("nometeam"), rs.getString("titolohackahon"));
+                Team team = getTeamByNomeAndHackathon(rs.getString("nometeam"), rs.getString("titolohackathon"));
 
                 Voto v = new Voto(
                         giudice,

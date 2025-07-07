@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class PaginaDocumento {
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Documento");
     private JPanel panel1;
     private JLabel labelNomeDocumento;
     private JButton openDocButton;
@@ -20,7 +20,6 @@ public class PaginaDocumento {
     private JButton sendCommentButton;
 
     public PaginaDocumento(JFrame frameChiamante, String selectedFile, String nomeTeam, String titoloHackathon, String emailUtente, Controller controller) {
-        new JFrame("Documento");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
@@ -54,8 +53,8 @@ public class PaginaDocumento {
             textAreaListaCommentiAlTeam.setText("Nessun commento ricevuto");
         }
 
-        // verifica la possibilità di aggiungerne commenti (solo per i giudici assegnati)
-        if (!controller.isTeamGiudicabileByGiudice(nomeTeam, titoloHackathon, emailUtente)) {
+        // verifica la possibilità di aggiungerne commenti (solo in fase di gara in corso e solo per i giudici assegnati)
+        if (!(controller.getHackathonByTitolo(titoloHackathon).verificaStatoGara("In corso") && controller.isTeamGiudicabileByGiudice(nomeTeam, titoloHackathon, emailUtente))) {
             panelGiudice.setVisible(false);
         }
 

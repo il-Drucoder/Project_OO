@@ -8,14 +8,13 @@ import java.awt.event.ActionListener;
 import java.util.Objects;
 
 public class BenvenutoGiudice {
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Benvenuto Giudice");
     private JPanel panel1;
     private JLabel labelNomeGiudice;
     private JComboBox<String> comboBoxSceltaAzione;
     private JButton okButton;
 
     public BenvenutoGiudice(JFrame frameChiamante, String emailGiudice, Controller controller) {
-        new JFrame("Benvenuto Giudice");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();

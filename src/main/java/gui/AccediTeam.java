@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class AccediTeam {
     private static final String SDEFAULT = "Seleziona";
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Accedi team");
     private JPanel panel1;
     private JComboBox<String> comboBoxTitoloHackathon;
     private JComboBox<String> comboBoxNomeTeam;
@@ -19,7 +19,6 @@ public class AccediTeam {
     private JButton cancelButton;
 
     public AccediTeam(JFrame frameChiamante, String emailConcorrente , Controller controller) {
-        new JFrame("Accedi team");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

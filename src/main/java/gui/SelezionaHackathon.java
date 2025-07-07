@@ -11,14 +11,13 @@ import java.util.Objects;
 
 public class SelezionaHackathon {
     private static final String SDEFAULT = "Seleziona";
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Ricerca Hackathon");
     private JPanel panel1;
     private JComboBox<String> comboBoxTitoloHackathon;
     private JButton okButton;
     private JButton cancelButton;
 
     public SelezionaHackathon(JFrame frameChiamante, String emailUtente, List<String> listaTitoliHackathon, Controller controller) {
-        new JFrame("Ricerca Hackathon");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

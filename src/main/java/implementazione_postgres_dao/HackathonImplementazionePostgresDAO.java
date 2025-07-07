@@ -79,8 +79,8 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
     public void setDescrizioneHackathon(Hackathon hackathon, String descrizione) {
         String sql = "UPDATE hackathon SET descrizioneproblema = ? WHERE titolo = ?";
         try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
-            stmt.setString(1,descrizione);
-            stmt.setString(2,hackathon.getTitolo());
+            stmt.setString(1, descrizione);
+            stmt.setString(2, hackathon.getTitolo());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Impossibile aggiornare la descrizione del problema per l'Hackathon: " + hackathon.getTitolo(), e);
@@ -91,8 +91,8 @@ public class HackathonImplementazionePostgresDAO implements HackathonDAO {
     public void setClassificaHackathon(Hackathon hackathon, String classifica) {
         String sql = "UPDATE hackathon SET classifica = ? WHERE titolo = ?";
         try (PreparedStatement stmt = connessione.prepareStatement(sql)) {
-            stmt.setString(1,classifica);
-            stmt.setString(2,hackathon.getTitolo());
+            stmt.setString(1, classifica);
+            stmt.setString(2, hackathon.getTitolo());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Impossibile aggiornare la classifica per l'Hackathon: " + hackathon.getTitolo(), e);

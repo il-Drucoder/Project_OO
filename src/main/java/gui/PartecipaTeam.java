@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class PartecipaTeam {
     private static final String SDEFAULT = "Seleziona";
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Partecipa team");
     private JPanel panel1;
     private JComboBox<String> comboBoxTitoloHackathon;
     private JComboBox<String> comboBoxNomeTeam;
@@ -21,7 +21,6 @@ public class PartecipaTeam {
     private JButton cancelButton;
 
     public PartecipaTeam(JFrame frameChiamante, String emailConcorrente, Controller controller) {
-        new JFrame("Partecipa team");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

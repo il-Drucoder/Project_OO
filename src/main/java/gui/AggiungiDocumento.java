@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 public class AggiungiDocumento extends JFrame {
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Aggiungi documento");
     private JPanel panel1;
     private JTextField filePercorsoFile;
     private JButton browseButton;
@@ -16,7 +16,6 @@ public class AggiungiDocumento extends JFrame {
     private JButton cancelButton;
 
     public AggiungiDocumento(JFrame frameChiamante, String nomeTeam, String titoloHackathon, Controller controller) {
-        new JFrame("Aggiungi documento");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

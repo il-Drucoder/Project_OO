@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class VisionaTeam {
     private static final String SDEFAULT = "Seleziona";
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Visiona team giudicati");
     private JPanel panel1;
     private JComboBox<String> comboBoxTitoloHackathon;
     private JComboBox<String> comboBoxNomeTeam;
@@ -19,7 +19,6 @@ public class VisionaTeam {
     private JButton cancelButton;
 
     public VisionaTeam(JFrame frameChiamante, String emailGiudice , Controller controller) {
-        new JFrame("Visiona team giudicati");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

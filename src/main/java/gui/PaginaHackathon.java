@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;
 
 public class PaginaHackathon {
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Hackathon");
     private JPanel panel1;
     private JLabel labelNomeHackathon;
     private JLabel labelStatoGara;
@@ -33,7 +33,6 @@ public class PaginaHackathon {
     private JButton viewRankButton;
 
     public PaginaHackathon(JFrame frameChiamante, String emailUtente, String titoloHackathon, Controller controller) {
-        new JFrame("Hackathon");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();
@@ -110,7 +109,7 @@ public class PaginaHackathon {
             }
         });
 
-        verificaConvocazioneGiudcie(controller, emailUtente, titoloHackathon);
+        verificaConvocazioneGiudice(controller, emailUtente, titoloHackathon);
 
         viewRankButton.addActionListener(new ActionListener() {
             @Override
@@ -163,7 +162,7 @@ public class PaginaHackathon {
         }
     }
 
-    private void verificaConvocazioneGiudcie(Controller controller, String emailUtente, String titoloHackathon) {
+    private void verificaConvocazioneGiudice(Controller controller, String emailUtente, String titoloHackathon) {
         // verifica possibilità di convocare giudice (prima dell'inizio delle iscrizioni e solo per l'organizzatore)
         if (!(controller.getHackathonByTitolo(titoloHackathon).statoGara().equals("Iscrizioni non ancora aperte") && emailUtente.toLowerCase().contains("@organizzatore.com"))) {
             addJudgeButton.setVisible(false);

@@ -172,7 +172,7 @@ public class DocumentoImplementazionePostgresDAO implements DocumentoDAO {
             stmt.setInt(2, documento.getIdDocumento());
             stmt.setString(3, commento);
 
-            stmt.executeUpdate(); // esegue l'inserimento nel db
+            stmt.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Impossibile aggiungere il commento: '" + commento + "' al documento: " + documento.getNomeFile(), e);
         }

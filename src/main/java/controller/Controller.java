@@ -133,7 +133,7 @@ public class Controller {
     }
 
     private void dumpDatiConvocazioni() {
-        for (Giudice giudice :  giudici) {
+        for (Giudice giudice : giudici) {
             // aggiunta degli Hackathon nella lista degli Hackathon assegnati dei giudici
             for (Hackathon hackathonG : utenteDAO.getHackathonAssegnatiToGiudice(giudice)) {
                 Hackathon hackathon =  getHackathonByTitolo(hackathonG.getTitolo());
@@ -1076,7 +1076,7 @@ public class Controller {
     public Documento getDocumentoByTeam(String fileSelezionato, String nomeTeam, String titoloHackathon) {
         if (!(nomeTeam.isEmpty() && titoloHackathon.isEmpty())) {
             Team team = getTeamByNomeAndHackathon(nomeTeam, titoloHackathon);
-            if  (team != null) {
+            if (team != null) {
                 List<Documento> documentiList = team.getDocumenti();
                 for (Documento documento : documentiList) {
                     if (documento.getNomeFile().equals(fileSelezionato)) {

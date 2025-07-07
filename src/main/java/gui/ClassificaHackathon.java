@@ -4,13 +4,12 @@ import javax.swing.*;
 import java.util.List;
 
 public class ClassificaHackathon {
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Classifica Hackathon");;
     private JPanel panel1;
     private JLabel labelTitoloClassifica;
     private JTextArea textAreaClassifica;
 
     public ClassificaHackathon(JFrame frameChiamante, List<String> classifica, String titoloHackathon) {
-        new JFrame("Classifica Hackathon");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

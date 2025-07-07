@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VisualizzaDocumenti {
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Visualizza Documenti");
     private JPanel panel1;
     private JComboBox<String> comboBoxDocumento;
     private JButton okButton;
     private JButton cancelButton;
 
     public VisualizzaDocumenti(JFrame frameChiamante, String nomeTeam, String titoloHackathon, String emailUtente, Controller controller) {
-        new JFrame("Visualizza Documenti");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

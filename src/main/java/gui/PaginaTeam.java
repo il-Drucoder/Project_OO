@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PaginaTeam {
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Team");
     private JPanel panel1;
     private JLabel labelNomeTeam;
     private JLabel labelPunteggioTeam;
@@ -22,7 +22,6 @@ public class PaginaTeam {
     private JButton confirmButton;
 
     public PaginaTeam(JFrame frameChiamante, String nomeTeam, String titoloHackathon, String emailUtente, Controller controller) {
-        new JFrame("Team");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.pack();

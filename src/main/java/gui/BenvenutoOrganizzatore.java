@@ -8,14 +8,13 @@ import java.awt.event.ActionListener;
 import java.util.Objects;
 
 public class BenvenutoOrganizzatore {
-    private static JFrame frame;
+    private static final JFrame frame = new JFrame("Benvenuto Organizzatore");;
     private JPanel panel1;
     private JLabel labelNomeOrganizzatore;
     private JComboBox<String> comboBoxSceltaAzione;
     private JButton okButton;
 
     public BenvenutoOrganizzatore(JFrame frameChiamante, String emailOrganizzatore, Controller controller) {
-        new JFrame("Benvenuto Organizzatore");
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
