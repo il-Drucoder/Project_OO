@@ -6,6 +6,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Schermata di dettaglio di un team partecipante ad un Hackathon.
+ * Mostra informazioni sui membri, gara di appartenenza e punteggio (se disponibile).
+ * Permette anche di accedere alle pagine di visualizzazione e aggiunta documenti
+ */
 public class PaginaTeam {
     private static final JFrame frame = new JFrame("Team");
     private JPanel panel1;
@@ -21,6 +26,15 @@ public class PaginaTeam {
     private JSpinner spinnerVoto;
     private JButton confirmButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Pagina team.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param nomeTeam il nome del team da visualizzare
+     * @param titoloHackathon il titolo Hackathon a cui appartiene tale team
+     * @param emailUtente l'email dell'utente che vuole visualizzare la pagina del team
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public PaginaTeam(JFrame frameChiamante, String nomeTeam, String titoloHackathon, String emailUtente, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

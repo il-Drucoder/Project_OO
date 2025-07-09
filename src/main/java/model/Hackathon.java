@@ -3,6 +3,10 @@ package model;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * Classe che rappresenta un hackathon nella piattaforma.
+ * Gestisce tutte le operazioni relative alla gestione di un hackathon.
+ */
 public class Hackathon {
     // attributi
     private String titolo;
@@ -26,7 +30,18 @@ public class Hackathon {
     private final List<Team> teamList = new ArrayList<>();
 
     // metodi
-    // Costruttore (solo l'organizzatore può creare un Hackathon)
+    /**
+     * Costruttore che crea un'istanza di un nuovo Hackathon.
+     *
+     * @param creatore il creatore dell'Hackathon
+     * @param titolo il titolo dell'Hacakthon
+     * @param numMaxIscritti il numero massimo di iscritti all'Hackathon
+     * @param dimMaxTeam il numero massimo di iscritti ai team dell'Hackathon
+     * @param inizioIscrizioni il giorno di inizio delle iscrizioni dell'Hackathon
+     * @param dataInizio il giorno di inizio gara dell'Hackathon
+     * @param dataFine il giorno di fine gara dell'Hackathon
+     * @param indirizzoSede la sede dell'Hackathon
+     */
     public Hackathon(Organizzatore creatore, String titolo, int numMaxIscritti, int dimMaxTeam, LocalDate inizioIscrizioni, LocalDate dataInizio, LocalDate dataFine, String indirizzoSede) {
         if (creatore == null) {
             throw new IllegalArgumentException("Creatore mancante!");
@@ -46,7 +61,24 @@ public class Hackathon {
         this.numVotiAssegnati = 0;
     }
 
-    // Costruttore per il DAO
+    /**
+     * Costruttore che crea un'istanza di un nuovo Hackathon.
+     * Utilizzato dal DAO
+     *
+     * @param creatore il creatore dell'Hackathon
+     * @param titolo il titolo dell'Hacakthon
+     * @param numMaxIscritti il numero massimo di iscritti all'Hackathon
+     * @param dimMaxTeam il numero massimo di iscritti ai team dell'Hackathon
+     * @param inizioIscrizioni il giorno di inizio delle iscrizioni dell'Hackathon
+     * @param fineIscrizioni il giorno di fine delle iscrizioni dell'Hackathon
+     * @param dataInizio il giorno di inizio gara dell'Hackathon
+     * @param dataFine il giorno di fine gara dell'Hackathon
+     * @param descrizioneProblema la descrizione del problema dell'Hackathon
+     * @param classifica la classifica dell'Hackathon
+     * @param indirizzoSede la sede dell'Hackathon
+     * @param numIscritti all'Hackathon
+     * @param numVotiAssegnati ai team dell'Hackathon
+     */
     public Hackathon(Organizzatore creatore, String titolo, int numMaxIscritti, int dimMaxTeam, LocalDate inizioIscrizioni, LocalDate fineIscrizioni, LocalDate dataInizio, LocalDate dataFine, String descrizioneProblema, String classifica, String indirizzoSede, int numIscritti, int numVotiAssegnati ) {
         this.creatore = creatore;
         this.titolo = titolo;
@@ -63,8 +95,20 @@ public class Hackathon {
         this.numVotiAssegnati = numVotiAssegnati;
     }
 
+    /**
+     * Restituisce il titolo dell'Hackathon.
+     *
+     * @return titolo
+     */
     public String getTitolo() { return titolo; }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta il titolo con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param titolo nuovo titolo
+     * @throws SecurityException se non autorizzato
+     */
     public void setTitolo(Organizzatore creatore, String titolo) {
         if (!getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -72,8 +116,20 @@ public class Hackathon {
         this.titolo = titolo;
     }
 
+    /**
+     * Restituisce la data di inizio.
+     *
+     * @return data di inizio
+     */
     public LocalDate getDataInizio() { return dataInizio; }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta la data di inizio con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param dataInizio nuova data
+     * @throws SecurityException se non autorizzato
+     */
     public void setDataInizio(Organizzatore creatore, LocalDate dataInizio) {
         if (!getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -81,8 +137,20 @@ public class Hackathon {
         this.dataInizio = dataInizio;
     }
 
+    /**
+     * Restituisce la data di fine.
+     *
+     * @return data di fine
+     */
     public LocalDate getDataFine() { return dataFine; }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta la data di fine con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param dataFine nuova data
+     * @throws SecurityException se non autorizzato
+     */
     public void setDataFine(Organizzatore creatore, LocalDate dataFine) {
         if (!getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -90,8 +158,20 @@ public class Hackathon {
         this.dataFine = dataFine;
     }
 
+    /**
+     * Restituisce il numero massimo di iscritti.
+     *
+     * @return numero massimo iscritti
+     */
     public int getNumMaxIscritti() { return numMaxIscritti; }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta il numero massimo di iscritti con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param numMaxIscritti nuovo numero
+     * @throws SecurityException se non autorizzato
+     */
     public void setNumMaxIscritti(Organizzatore creatore, int numMaxIscritti) {
         if (!getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -99,29 +179,63 @@ public class Hackathon {
         this.numMaxIscritti = numMaxIscritti;
     }
 
+    /**
+     * Restituisce il numero corrente di iscritti.
+     *
+     * @return numero iscritti
+     */
     public int getNumIscritti() { return numIscritti; }
-    // metodo che aggiunge un iscritto (invocato nel metodo creaTeam e partecipaTeam in concorrente)
+
+    /**
+     * Aggiunge un iscritto al conteggio.
+     *
+     * @param team team che si iscrive
+     */
     public void addIscritto(Team team) {
         if (getTeamList().contains(team)) {
             this.numIscritti++;
         }
     }
 
+    /**
+     * Restituisce il numero di voti assegnati.
+     *
+     * @return numero voti
+     */
     public int getNumVotiAssegnati() { return numVotiAssegnati; }
-    // metodo utilizzato dal dumpDatiVoti
+
+    /**
+     * Incrementa il numero di voti assegnati.
+     */
     public void addNumVotiAssegnati() {
         numVotiAssegnati++;
     }
 
-    // metodo che aggiunge un voto (invocato nel metodo assegnaVoto in giudice), con controllo del team
+    /**
+     * Aggiunge un voto al conteggio.
+     *
+     * @param team team che riceve il voto
+     */
     public void addVoto(Team team) {
         if (getTeamList().contains(team)) {
             this.numVotiAssegnati++;
         }
     }
 
+    /**
+     * Restituisce la dimensione massima dei team.
+     *
+     * @return dimensione massima team
+     */
     public int getDimMaxTeam() { return dimMaxTeam; }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta la dimensione massima dei team con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param dimMaxTeam nuova dimensione
+     * @throws SecurityException se non autorizzato
+     */
     public void setDimMaxTeam(Organizzatore creatore, int dimMaxTeam) {
         if (getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -129,8 +243,20 @@ public class Hackathon {
         this.dimMaxTeam = dimMaxTeam;
     }
 
+    /**
+     * Restituisce la data di inizio iscrizioni.
+     *
+     * @return data inizio iscrizioni
+     */
     public LocalDate getInizioIscrizioni() { return inizioIscrizioni; }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta la data di inizio iscrizioni con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param inizioIscrizioni nuova data
+     * @throws SecurityException se non autorizzato
+     */
     public void setInizioIscrizioni(Organizzatore creatore, LocalDate inizioIscrizioni) {
         if (getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -138,8 +264,20 @@ public class Hackathon {
         this.inizioIscrizioni = inizioIscrizioni;
     }
 
+    /**
+     * Restituisce la data di fine iscrizioni.
+     *
+     * @return data fine iscrizioni
+     */
     public LocalDate getFineIscrizioni() { return fineIscrizioni; }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta la data di fine iscrizioni con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param fineIscrizioni nuova data
+     * @throws SecurityException se non autorizzato
+     */
     public void setFineIscrizioni(Organizzatore creatore, LocalDate fineIscrizioni) {
         if (!getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -147,8 +285,20 @@ public class Hackathon {
         this.fineIscrizioni = fineIscrizioni;
     }
 
+    /**
+     * Restituisce la descrizione del problema.
+     *
+     * @return descrizione problema
+     */
     public String getDescrizioneProblema() { return descrizioneProblema; }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta la descrizione del problema con verifica del giudice.
+     *
+     * @param giudice giudice che modifica
+     * @param descrizioneProblema nuova descrizione
+     * @throws SecurityException se non autorizzato
+     */
     public void setDescrizioneProblema(Giudice giudice, String descrizioneProblema) {
         for (Hackathon hackathonG : giudice.getHackathonAssegnati()) {
             if (hackathonG.getTitolo().equals(this.titolo)) {
@@ -159,7 +309,13 @@ public class Hackathon {
         throw new SecurityException("Accesso negato!");
     }
 
-    // getter con controllo dell'utente
+    /**
+     * Restituisce la classifica con verifica dell'utente.
+     *
+     * @param utente utente che richiede
+     * @return lista della classifica
+     * @throws SecurityException se utente non valido
+     */
     public List<String> getClassifica(UtentePiattaforma utente) {
         // verifica che la richiesta sia effettuata da un utente
         if (utente == null) {
@@ -176,7 +332,13 @@ public class Hackathon {
         this.classifica = classifica;
     }
 
-    // getter con controllo dell'utente
+    /**
+     * Restituisce l'indirizzo della sede con verifica dell'utente.
+     *
+     * @param utente utente che richiede
+     * @return indirizzo sede
+     * @throws SecurityException se utente non valido
+     */
     public String getIndirizzoSede(UtentePiattaforma utente) {
         // verifica che la richiesta sia effettuata da un utente
         if (utente == null) {
@@ -184,7 +346,14 @@ public class Hackathon {
         }
         return indirizzoSede;
     }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta l'indirizzo della sede con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param indirizzoSede nuovo indirizzo
+     * @throws SecurityException se non autorizzato
+     */
     public void setIndirizzoSede(Organizzatore creatore, String indirizzoSede) {
         if (!getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -192,7 +361,12 @@ public class Hackathon {
         this.indirizzoSede = indirizzoSede;
     }
 
-    // metodo per il DAO
+    /**
+     * Restituisce l'indirizzo della sede (senza verifica).
+     * Utilizzato dal DAO
+     *
+     * @return indirizzo sede
+     */
     public String getIndirizzoSede() {
         return indirizzoSede;
     }
@@ -226,12 +400,22 @@ public class Hackathon {
         return classificaFormattata;
     }
 
-    // metodo che verifica l'esistenza di un team (tramite in nome) in un Hackathon. True se lo trova, false altrimenti
+    /**
+     * Verifica se esiste un team con il nome specificato.
+     *
+     * @param nomeTeam nome da verificare
+     * @return true se esiste, false altrimenti
+     */
     public boolean esisteTeam(String nomeTeam) {
         return getTeamList().stream().anyMatch(team -> team.getNome().equalsIgnoreCase(nomeTeam)); // ignora le lettere maiuscole
     }
 
-    // metodo che cerca e restituisce un team, se viene trovato nella teamList, mediante nome del team
+    /**
+     * Cerca e restituisce un team per nome.
+     *
+     * @param nomeTeam nome del team
+     * @return team trovato o null
+     */
     public Team getTeamByNome(String nomeTeam) {
         for (Team team : getTeamList()) {
             if (team.getNome().equalsIgnoreCase(nomeTeam)) {
@@ -241,7 +425,13 @@ public class Hackathon {
         return null;
     }
 
-    // metodo per aggiungere un team alla lista teamList
+    /**
+     * Aggiunge un team con verifica del creatore.
+     *
+     * @param team team da aggiungere
+     * @param creatore creatore che aggiunge
+     * @throws SecurityException se non autorizzato
+     */
     public void aggiungiTeam(Team team, Concorrente creatore) {
         // verifica che il team venga aggiunto all'Hackathon solo tramite il creatore
         if(!team.getCreatore().equals(creatore)) {
@@ -254,7 +444,13 @@ public class Hackathon {
         }
     }
 
-    // metodo per aggiungere un giudice alla lista giudiceList
+    /**
+     * Aggiunge un giudice con verifica dell'organizzatore.
+     *
+     * @param giudice giudice da aggiungere
+     * @param organizzatore organizzatore che aggiunge
+     * @throws SecurityException se non autorizzato
+     */
     public void aggiungiGiudice(Giudice giudice, Organizzatore organizzatore) {
         // verifica che il giudice venga aggiunto all'Hackathon solo tramite il creatore
         if(!getCreatore().getEmail().equals(organizzatore.getEmail())) {
@@ -263,49 +459,93 @@ public class Hackathon {
         this.giudiceList.add(giudice);
     }
 
-    // metodo per verificare se un Hackathon è terminato
+    /**
+     * Verifica se l'Hackathon è terminato.
+     *
+     * @return true se terminato, false altrimenti
+     */
     public boolean isTerminato() {
         return LocalDate.now().isAfter(getDataFine());
     }
 
+    /**
+     * Verifica se le iscrizioni sono terminate.
+     *
+     * @return true se terminate, false altrimenti
+     */
     public boolean iscrizioniTerminate() {
         return LocalDate.now().isAfter(getFineIscrizioni());
     }
 
-    // un Hackathon è al completo quando il numero di iscritti raggiunge il numero massimo di iscritti
+    /**
+     * Verifica se l'Hackathon è al completo.
+     *
+     * @return true se completo, false altrimenti
+     */
     public boolean isCompleto() {
         return getNumMaxIscritti() == getNumIscritti();
     }
 
+    /**
+     * Verifica se la classifica è calcolabile.
+     *
+     * @return true se calcolabile, false altrimenti
+     */
     // una classifica è calcolabile quando l'Hackathon è terminato e sono stati assegnati tutti i voti (V = T * G), dove V è il numero di voti, T è il numero di team e G è il numero di giudici (ogni giudice dà un voto ad ogni team)
     public boolean isClassificaCalcolabile() {
         return isTerminato() && (getNumVotiAssegnati() == getTeamList().size() * getGiudiceList().size());
     }
 
-    // getter per il creatore dell'Hackathon
+    /**
+     * Restituisce il creatore dell'Hackathon.
+     *
+     * @return organizzatore creatore
+     */
     public Organizzatore getCreatore() {
         return creatore;
     }
 
-    // getter per la lista di giudici che supervisionano l'Hackathon
+    /**
+     * Restituisce la lista dei giudici.
+     *
+     * @return lista di Giudice
+     */
     public List<Giudice> getGiudiceList() {
         return new ArrayList<>(giudiceList); // restituisce una copia per sicurezza
     }
-    // metodo utilizzato dal dumpDatiConvocazioni
+
+    /**
+     * Aggiunge un giudice alla lista.
+     *
+     * @param giudice giudice da aggiungere
+     */
     public void addGiudice(Giudice giudice) {
         giudiceList.add(giudice);
     }
 
-    // getter per la lista di team che partecipano all'Hackathon
+    /**
+     * Restituisce la lista dei team.
+     *
+     * @return lista di Team
+     */
     public List<Team> getTeamList() {
         return new ArrayList<>(teamList);
     }
-    // metodo utilizzato dal dumpDatiTeam
+
+    /**
+     * Aggiunge un team alla lista.
+     *
+     * @param team team da aggiungere
+     */
     public void addTeam(Team team) {
         teamList.add(team);
     }
 
-    // metodo che determina lo stato in cui si trova la gara
+    /**
+     * Determina lo stato corrente della gara.
+     *
+     * @return stringa descrittiva dello stato
+     */
     public String statoGara() {
         if (isClassificaCalcolabile()) {
             return "Valutata";
@@ -328,7 +568,12 @@ public class Hackathon {
         return "Iscrizioni non ancora aperte";
     }
 
-    // metodo per verificare che la gara sia in un determinato stato
+    /**
+     * Verifica se la gara è nello stato richiesto.
+     *
+     * @param statoRichiesto stato da verificare
+     * @return true se corrisponde, false altrimenti
+     */
     public boolean verificaStatoGara(String statoRichiesto) {
         String statoGara = statoGara();
 
@@ -336,7 +581,13 @@ public class Hackathon {
         return statoRichiesto.equals(statoGara);
     }
 
-    // metodo per verificare che la gara sia in un determinato stato (Overload del metodo precedente)
+    /**
+     * Verifica lo stato della gara con messaggio di errore specifico.
+     *
+     * @param statoRichiesto stato richiesto
+     * @param azioneDaFare azione che si stava tentando
+     * @throws IllegalStateException se lo stato non corrisponde
+     */
     public void verificaStatoGara(String statoRichiesto, String azioneDaFare) {
         String statoGara = statoGara();
 
@@ -365,16 +616,22 @@ public class Hackathon {
         }
     }
 
-    // metodo usato dal Costruttore per il DAO
+    /**
+     * Converte una stringa formattata in lista.
+     * Utilizzato per il Costruttore del DAO
+     *
+     * @param input stringa da convertire
+     * @return lista risultante
+     */
     public static List<String> convertStringToList(String input) {
         if (input == null || input.length() < 2) {
             return new ArrayList<>();
         }
 
-        // Rimuove le parentesi quadre iniziali e finali
+        // rimuove le parentesi quadre iniziali e finali
         String trimmed = input.substring(1, input.length() - 1).trim();
 
-        // Se la stringa è vuota dopo aver rimosso le parentesi
+        // se la stringa è vuota dopo aver rimosso le parentesi
         if (trimmed.isEmpty()) {
             return new ArrayList<>();
         }

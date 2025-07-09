@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Finestra per la selezione di un Hackathon dalla lista disponibile.
+ * Filtra gli Hackathon in base al ruolo e al tipo di ricerca (es: Hackathon e Hackathon creati).
+ */
 public class SelezionaHackathon {
     private static final String SDEFAULT = "Seleziona";
     private static final JFrame frame = new JFrame("Ricerca Hackathon");
@@ -17,6 +21,14 @@ public class SelezionaHackathon {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Seleziona Hackathon.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailUtente l'email dell'utente che vuole selezionare un Hackathon
+     * @param listaTitoliHackathon la lista dei titoli degli Hackathon selezionabili
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public SelezionaHackathon(JFrame frameChiamante, String emailUtente, List<String> listaTitoliHackathon, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

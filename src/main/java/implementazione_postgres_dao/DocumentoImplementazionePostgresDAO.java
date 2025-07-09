@@ -7,11 +7,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementazione concreta dell'interfaccia DocumentoDAO per PostgreSQL.
+ * Gestisce le operazioni WORM (Write-Once, Read-Many) per i documenti nel database.
+ */
 public class DocumentoImplementazionePostgresDAO implements DocumentoDAO {
 
     private final Connection connessione;
 
-    // Costruttore
+    /**
+     * Costruttore che inizializza la connessione al database.
+     *
+     * @param connessione la connessione al database PostgreSQL
+     */
     public DocumentoImplementazionePostgresDAO(Connection connessione) {
         this.connessione = connessione;
     }

@@ -3,6 +3,10 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe che rappresenta un giudice nella piattaforma, estendendo UtentePiattaforma.
+ * Gestisce la valutazione dei team e le assegnazioni agli hackathon.
+ */
 public class Giudice extends UtentePiattaforma {
     // rappresentazione relazioni
     private final List<Hackathon> hackathonAssegnati = new ArrayList<>(); // lista di Hackathon supervisionati dal giudice
@@ -12,19 +16,42 @@ public class Giudice extends UtentePiattaforma {
     private final List<Team> teamGiudicati = new ArrayList<>(); // lista dei team valutati
 
     // metodi
-    // Costruttore
+    /**
+     * Costruttore che crea un'istanza di un nuovo Giudice.
+     *
+     * @param nome il nome del Giudice
+     * @param cognome il cognome del Giudice
+     * @param email l'email del Giudice
+     * @param password la password del Giudice
+     */
     public Giudice(String nome, String cognome, String email, String password) {
         super(nome, cognome, email, password, "giudice"); // chiama il costruttore padre
     }
 
-    // getter per la lista di hackathon assegnati
+    /**
+     * Restituisce la lista degli hackathon assegnati.
+     *
+     * @return lista di Hackathon
+     */
     public List<Hackathon> getHackathonAssegnati() { return hackathonAssegnati; }
-    //metodo utilizzato dal dumpDatiConvocazioni
+
+    /**
+     * Aggiunge un Hackathon alla lista degli assegnati.
+     *
+     * @param hackathon hackathon da aggiungere
+     */
     public void addHackathonAssegnati(Hackathon hackathon) {
         hackathonAssegnati.add(hackathon);
     }
 
-    // metodo per aggiungere un Hackathon alla lista hackathonAssegnati del giudice
+    /**
+     * Aggiunge un Hackathon assegnato con verifica dell'organizzatore.
+     *
+     * @param hackathon hackathon da aggiungere
+     * @param organizzatore organizzatore che assegna
+     * @throws IllegalArgumentException se Hackathon o organizzatore non validi
+     * @throws SecurityException se l'organizzatore non è autorizzato
+     */
     public void aggiungiHackathonAssegnato(Hackathon hackathon, Organizzatore organizzatore) {
         // verifica che l'Hackathon esista
         if (hackathon == null) {
@@ -45,14 +72,30 @@ public class Giudice extends UtentePiattaforma {
         hackathonAssegnati.add(hackathon); // aggiunta del nuovo Hackathon alla lista hackathonAssegnati
     }
 
-    // getter per la lista di voti assegnati ai team
+    /**
+     * Restituisce la lista dei voti assegnati.
+     *
+     * @return lista di Voto
+     */
     public List<Voto> getVotiAssegnati() { return votiAssegnati; }
-    // metodo utilizzato dal dumpDatiVoto
+
+    /**
+     * Aggiunge un voto alla lista dei voti assegnati.
+     *
+     * @param voto voto da aggiungere
+     */
     public void addVotiAssegnati(Voto voto) {
         votiAssegnati.add(voto);
     }
 
-    // metodo per assegnare un voto a un team
+    /**
+     * Assegna un voto a un team.
+     *
+     * @param team team da valutare
+     * @param valore valore del voto (0-10)
+     * @throws IllegalArgumentException se il voto non è valido
+     * @throws SecurityException se il giudice non è autorizzato
+     */
     public void assegnaVoto(Team team, int valore) {
         // verica che il valore da assegnare come voto sia compreso tra 0 e 10
         if (valore < 0 || valore > 10) {
@@ -78,14 +121,28 @@ public class Giudice extends UtentePiattaforma {
         giudicaTeam(team);
     }
 
-    // getter per la lista di organizzatori invitanti
+    /**
+     * Restituisce la lista degli organizzatori invitanti.
+     *
+     * @return lista di Organizzatore
+     */
     public List<Organizzatore> getOrganizzatoriInvitanti() { return organizzatoriInvitanti; }
-    // metodo utilizzato dal dumpDatiConvocazioni
+
+    /**
+     * Aggiunge un organizzatore alla lista degli invitanti.
+     *
+     * @param organizzatore organizzatore da aggiungere
+     */
     public void addOrganizzatoriInvitanti(Organizzatore organizzatore) {
         organizzatoriInvitanti.add(organizzatore);
     }
 
-    // metodo per aggiungere un organizzatore alla lista OrganizzatoriInvitanti del giudice
+    /**
+     * Aggiunge un organizzatore invitante con verifica.
+     *
+     * @param organizzatore organizzatore da aggiungere
+     * @throws IllegalArgumentException se l'organizzatore non è valido
+     */
     public void aggiungiOrganizzatoriInvitanti(Organizzatore organizzatore) {
         if (organizzatore == null) {
             throw new IllegalArgumentException("Organizzatore non valido!");
@@ -93,21 +150,43 @@ public class Giudice extends UtentePiattaforma {
         organizzatoriInvitanti.add(organizzatore);
     }
 
-    // getter per la lista di team giudicabili
+    /**
+     * Restituisce la lista dei team giudicabili.
+     *
+     * @return lista di Team
+     */
     public List<Team> getTeamGiudicabili() { return teamGiudicabili; }
-    // metodo utilizzato dal dumpDatiVotiAssegnati
+
+    /**
+     * Aggiunge un team alla lista dei giudicabili.
+     *
+     * @param team team da aggiungere
+     */
     public void addTeamGiudicabili(Team team) {
         teamGiudicabili.add(team);
     }
 
-    // metodo per aggiungere un team alla lista teamGiudicabili
+    /**
+     * Aggiunge un team giudicabile.
+     *
+     * @param team team da aggiungere
+     */
     public void aggiungiTeam(Team team) {
         teamGiudicabili.add(team);
     }
 
-    // getter per la lista di team giudicati
+    /**
+     * Restituisce la lista dei team giudicati.
+     *
+     * @return lista di Team
+     */
     public List<Team> getTeamGiudicati() { return teamGiudicati; }
-    // metodo utilizzato dal dumpDatiVotiAssegnati
+
+    /**
+     * Aggiunge un team alla lista dei giudicati.
+     *
+     * @param team team da aggiungere
+     */
     public void addTeamGiudicati(Team team) {
         teamGiudicati.add(team);
     }
@@ -118,6 +197,12 @@ public class Giudice extends UtentePiattaforma {
         teamGiudicabili.remove(team);
     }
 
+    /**
+     * Verifica se il giudice è assegnato a un team.
+     *
+     * @param team team da verificare
+     * @return true se assegnato, false altrimenti
+     */
     public boolean isAssegnato(Team team) {
         for (Team teamG :  teamGiudicabili) {
             if (teamG.getNome().equals(team.getNome()) && teamG.getHackathon().getTitolo().equals(team.getHackathon().getTitolo())) {

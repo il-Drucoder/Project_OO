@@ -8,6 +8,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Finestra per la selezione di un documento dalla lista disponibile.
+ * Mostra tutti i documenti caricati dal team precedentemente selezionato.
+ */
 public class VisualizzaDocumenti {
     private static final JFrame frame = new JFrame("Visualizza Documenti");
     private JPanel panel1;
@@ -15,6 +19,15 @@ public class VisualizzaDocumenti {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Visualizza documenti.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param nomeTeam il nome del team di cui si vogliono visualizzare i documenti
+     * @param titoloHackathon il titolo dell'Hackathon a cui partecipa tale team
+     * @param emailUtente l'email dell'utente che vuole visualizzare un documento
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public VisualizzaDocumenti(JFrame frameChiamante, String nomeTeam, String titoloHackathon, String emailUtente, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

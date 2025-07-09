@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Schermata per la selezione di un team, partecipante ad un determinato Hackathon, da valutare.
+ * Permette ai giudici assegnati al determinato Hackathon di valutare (una sola volta) ciascun team partecipante a tale gara
+ */
 public class GiudicaTeam {
     private static final String SDEFAULT = "Seleziona";
     private static final JFrame frame = new JFrame("Giudica team assegnati");
@@ -18,6 +22,13 @@ public class GiudicaTeam {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Giudica team.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailGiudice l'email del giudice che vuole valutare un team
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public GiudicaTeam(JFrame frameChiamante, String emailGiudice , Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

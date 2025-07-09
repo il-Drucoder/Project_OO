@@ -7,6 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 
+/**
+ * Schermata di dettaglio di un Hackathon con tutte le informazioni rilevanti.
+ * Offre funzionalità specifiche in base al ruolo dell'utente e allo stato dell'evento.
+ */
 public class PaginaHackathon {
     private static final JFrame frame = new JFrame("Hackathon");
     private JPanel panel1;
@@ -32,6 +36,14 @@ public class PaginaHackathon {
     private JButton addJudgeButton;
     private JButton viewRankButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Pagina Hackathon.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailUtente l'email dell'utente che vuole visualizzare la pagina dell'Hackathon
+     * @param titoloHackathon il titolo dell'Hackathon da visualizzare
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public PaginaHackathon(JFrame frameChiamante, String emailUtente, String titoloHackathon, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

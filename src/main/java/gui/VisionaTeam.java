@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Finestra per la visualizzazione dei team già valutati da un giudice.
+ * Permette di rivedere i team precedentemente valutati, visualizzando il loro voto complessivo attuale, i documenti caricati e i commenti ad essi ricevuti.
+ */
 public class VisionaTeam {
     private static final String SDEFAULT = "Seleziona";
     private static final JFrame frame = new JFrame("Visiona team giudicati");
@@ -18,6 +22,13 @@ public class VisionaTeam {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Visiona team.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailGiudice l'email del giudice che vuole visualizzare un team
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public VisionaTeam(JFrame frameChiamante, String emailGiudice , Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

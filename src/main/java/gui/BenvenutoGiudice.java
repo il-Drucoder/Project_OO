@@ -7,6 +7,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
+/**
+ * Schermata principale per gli utenti con ruolo giudice.
+ * Offre funzionalità per:
+ * giudicare team assegnati,
+ * visionare team giudicati,
+ * cercare Hackathon a lui assegnati e non,
+ * effettuare il logout.
+ */
 public class BenvenutoGiudice {
     private static final JFrame frame = new JFrame("Benvenuto Giudice");
     private JPanel panel1;
@@ -14,6 +22,13 @@ public class BenvenutoGiudice {
     private JComboBox<String> comboBoxSceltaAzione;
     private JButton okButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Benvenuto giudice.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailGiudice l'email del giudice che ha effettuato l'accesso
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public BenvenutoGiudice(JFrame frameChiamante, String emailGiudice, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

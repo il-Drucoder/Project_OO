@@ -7,6 +7,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
+/**
+ * Schermata principale per gli utenti con ruolo organizzatore.
+ * Offre funzionalità per:
+ * creare Hackathon,
+ * convocare giudici (ad Hackathon precedentemente creati)
+ * cercare Hackathon da lui creati e non,
+ * effettuare il logout.
+ */
 public class BenvenutoOrganizzatore {
     private static final JFrame frame = new JFrame("Benvenuto Organizzatore");;
     private JPanel panel1;
@@ -14,6 +22,13 @@ public class BenvenutoOrganizzatore {
     private JComboBox<String> comboBoxSceltaAzione;
     private JButton okButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Benvenuto organizzatore.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailOrganizzatore l'email dell'organizzatore che ha effettuato l'accesso
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public BenvenutoOrganizzatore(JFrame frameChiamante, String emailOrganizzatore, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

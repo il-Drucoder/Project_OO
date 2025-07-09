@@ -7,11 +7,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementazione concreta dell'interfaccia HackathonDAO per PostgreSQL.
+ * Gestisce le operazioni WORM (Write-Once, Read-Many) per gli Hackathon nel database.
+ */
 public class HackathonImplementazionePostgresDAO implements HackathonDAO {
 
     private final Connection connessione;
 
-    // Costruttore
+    /**
+     * Costruttore che inizializza la connessione al database.
+     *
+     * @param connessione la connessione al database PostgreSQL
+     */
     public HackathonImplementazionePostgresDAO(Connection connessione) {
         this.connessione = connessione;
     }

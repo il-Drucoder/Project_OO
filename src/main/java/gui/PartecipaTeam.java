@@ -10,6 +10,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Finestra per partecipare a un team esistente in un Hackathon.
+ * Richiede la password del team per l'accesso.
+ */
 public class PartecipaTeam {
     private static final String SDEFAULT = "Seleziona";
     private static final JFrame frame = new JFrame("Partecipa team");
@@ -20,6 +24,13 @@ public class PartecipaTeam {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Login.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailConcorrente l'email del concorrente che vuole partecipare al team
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public PartecipaTeam(JFrame frameChiamante, String emailConcorrente, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

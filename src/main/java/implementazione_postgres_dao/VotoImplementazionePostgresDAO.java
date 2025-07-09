@@ -7,10 +7,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementazione concreta dell'interfaccia VotoDAO per PostgreSQL.
+ * Gestisce le operazioni WORM (Write-Once, Read-Many) per i voti assegnati ai team dai giudici durante gli Hackathon.
+ */
 public class VotoImplementazionePostgresDAO implements VotoDAO {
+
     private final Connection connessione;
 
-    // Costruttore
+    /**
+     * Costruttore che inizializza la connessione al database.
+     *
+     * @param connessione la connessione al database PostgreSQL
+     */
     public VotoImplementazionePostgresDAO(Connection connessione) {
         this.connessione = connessione;
     }

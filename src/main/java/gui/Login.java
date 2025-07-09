@@ -7,6 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+/**
+ * Schermata di autenticazione per gli utenti registrati.
+ * Gestisce il processo di login con validazione delle credenziali.
+ */
 public class Login {
     private static final JFrame frame = new JFrame("Login");
     private JPanel panel1;
@@ -15,6 +19,12 @@ public class Login {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Login.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public Login(JFrame frameChiamante, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

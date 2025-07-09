@@ -1,5 +1,9 @@
 package model;
 
+/**
+ * Classe che rappresenta un voto assegnato da un giudice a un team.
+ * Gestisce il valore del voto e le relazioni con giudice e team.
+ */
 public class Voto {
     // attributi
     private int valore;
@@ -9,14 +13,32 @@ public class Voto {
     private final Giudice giudice; // giudice che assegna il voto
 
     // metodi
-    // Costruttore
+    /**
+   * Costruttore che crea un'istanza di un nuovo Voto.
+   *
+   * @param giudice il giudice che assegna il voto
+   * @param team il team che riceve il voto
+   * @param valore il valore del voto
+   */
     public Voto(Giudice giudice, Team team, int valore) {
         this.giudice = giudice;
         this.team = team;
         setValore(valore); // utilizza il set per effettuare la verifica del valore
     }
 
+    /**
+   * Restituisce il valore del voto.
+   *
+   * @return valore del voto
+   */
     public int getValore() { return valore; }
+
+    /**
+   * Imposta il valore del voto con verifica.
+   *
+   * @param valore nuovo valore (0-10)
+   * @throws IllegalArgumentException se il valore non è valido
+   */
     public void setValore(int valore) {
         // verifica che il nuovo voto abbia un valore valido
         if (valore < 0 || valore > 10) {
@@ -25,10 +47,25 @@ public class Voto {
         this.valore = valore;
     }
 
+    /**
+   * Restituisce il team che ha ricevuto il voto.
+   *
+   * @return team votato
+   */
     public Team getTeam() { return team; }
+
+    /**
+   * Restituisce il giudice che ha assegnato il voto.
+   *
+   * @return giudice votante
+   */
     public Giudice getGiudice() { return giudice; }
 
-    // override del metodo toString della classe Object, per rappresentare l'oggetto Voto come stringa (numero a lettere)
+    /**
+   * Override del metodo toString per rappresentare il voto in lettere.
+   *
+   * @return rappresentazione in lettere del voto
+   */
     @Override
     public String toString() {
         return (switch (getValore()) {

@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Schermata per la convocazione di giudici ad un Hackathon, da parte dell'organizzatore di quest'ultimo.
+ * Permette di selezionare un giudice e associarlo a un Hackathon specifico (precedentemente creato).
+ */
 public class ConvocaGiudice {
     private static final String SDEFAULT = "Seleziona";
     private static final JFrame frame = new JFrame("Convoca giudice");
@@ -18,6 +22,13 @@ public class ConvocaGiudice {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Convoca giudice.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailOrganizzatore la email dell'organizzatore dell'Hackathon
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public ConvocaGiudice(JFrame frameChiamante, String emailOrganizzatore, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

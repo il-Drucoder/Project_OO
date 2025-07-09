@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Schermata per l'accesso a un team esistente da parte di un concorrente.
+ * Permette di selezionare un Hackathon e visualizzare il team a cui si è iscritti.
+ */
 public class AccediTeam {
     private static final String SDEFAULT = "Seleziona";
     private static final JFrame frame = new JFrame("Accedi team");
@@ -18,6 +22,13 @@ public class AccediTeam {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Accedi team.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailConcorrente la email del concorrente
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public AccediTeam(JFrame frameChiamante, String emailConcorrente , Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

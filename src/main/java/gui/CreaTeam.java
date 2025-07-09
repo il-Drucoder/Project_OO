@@ -10,6 +10,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Schermata per la creazione di un nuovo team per partecipare ad un Hackathon.
+ * Permette di selezionare l'Hackathon a cui si vuole partecipare e definire nome e password del team da creare.
+ */
 public class CreaTeam {
     private static final JFrame frame = new JFrame("Crea team");
     private JPanel panel1;
@@ -19,6 +23,13 @@ public class CreaTeam {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Crea team.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailConcorrente l'email del concorrente che vuole creare un nuovo team
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public CreaTeam(JFrame frameChiamante, String emailConcorrente, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

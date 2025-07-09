@@ -7,6 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+/**
+ * Finestra di registrazione per nuovi utenti della piattaforma.
+ * Raccoglie i dati relativi a: nome, cognome, email e password, per la creazione dell'account.
+ */
 public class Signup {
     private static final JFrame frame = new JFrame("Signup");
     private JPanel panel1;
@@ -17,6 +21,12 @@ public class Signup {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Signup.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public Signup(JFrame frameChiamante, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

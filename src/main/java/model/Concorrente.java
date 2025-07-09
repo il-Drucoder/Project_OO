@@ -3,24 +3,53 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe che rappresenta un concorrente nella piattaforma, estendendo UtentePiattaforma.
+ * Gestisce la partecipazione ai team e le relative operazioni.
+ */
 public class Concorrente extends UtentePiattaforma {
     // rappresentazione relazioni
     private final List<Team> teamsAppartenenza = new ArrayList<>();
 
     // metodi
-    // Costruttore
+    /**
+     * Costruttore che crea un'istanza di un nuovo Concorrente.
+     *
+     * @param nome il nome del Concorrente
+     * @param cognome il cognome del Concorrente
+     * @param email l'email del Concorrente
+     * @param password la password del Concorrente
+     */
     public Concorrente(String nome, String cognome, String email, String password) {
         super(nome, cognome, email, password, "concorrente"); // chiama il costruttore padre
     }
 
-    // getter per la lista di team a cui appartiene il concorrente
+    /**
+     * Restituisce la lista dei team a cui appartiene il concorrente.
+     *
+     * @return lista di Team a cui il concorrente partecipa
+     */
     public List<Team> getListTeamAppartenenza() { return teamsAppartenenza; }
-    // metodo utilizzato dal dumpDatiPartecipazioniAiTeam
+
+    /**
+     * Aggiunge un team alla lista di appartenenza del concorrente.
+     *
+     * @param team il team da aggiungere
+     */
     public void addTeamAppartenenza(Team team) {
         teamsAppartenenza.add(team);
     }
 
-    // metodo per creare un nuovo team
+    /**
+     * Crea un nuovo team per l'Hackathon specificato.
+     *
+     * @param nome nome del team
+     * @param password password del team
+     * @param hackathon hackathon a cui partecipare
+     * @return il team creato
+     * @throws IllegalArgumentException se esiste già un team con lo stesso nome
+     * @throws IllegalStateException se il concorrente è già iscritto all'Hackathon
+     */
     public Team creaTeam(String nome, String password, Hackathon hackathon) {
         hackathon.verificaStatoGara("Iscrizioni aperte", "creare un nuovo team");
 
@@ -45,7 +74,16 @@ public class Concorrente extends UtentePiattaforma {
         return team;
     }
 
-    // metodo per partecipare a un team già esistente
+    /**
+     * Partecipa a un team esistente.
+     *
+     * @param nomeTeam nome del team
+     * @param password password del team
+     * @param hackathon hackathon a cui partecipare
+     * @throws IllegalStateException se il concorrente è già iscritto all'Hackathon
+     * @throws IllegalArgumentException se il team non esiste
+     * @throws SecurityException se la password è errata
+     */
     public void partecipaTeam(String nomeTeam, String password, Hackathon hackathon) {
         hackathon.verificaStatoGara("Iscrizioni aperte", "partecipare al team");
 
@@ -75,7 +113,12 @@ public class Concorrente extends UtentePiattaforma {
         hackathon.addIscritto(teamTrovato);
     }
 
-    // metodo per accedere a un team già esistente (verifica che il concorrente appartenga al team)
+    /**
+     * Verifica l'accesso a un team.
+     *
+     * @param team team a cui accedere
+     * @throws IllegalArgumentException se il concorrente non partecipa al team
+     */
     public void accediTeam(Team team) {
         for (Team teamC : teamsAppartenenza) {
             if (team == teamC) {
@@ -85,7 +128,12 @@ public class Concorrente extends UtentePiattaforma {
         throw new IllegalArgumentException("Il concorrente non partecipa al team!");
     }
 
-    // metodo per verificare che il concorrente non sia già iscritto a un determinato Hackathon attraverso un team
+    /**
+     * Verifica se il concorrente partecipa a un determinato hackathon.
+     *
+     * @param hackathon hackathon da verificare
+     * @return nome del team se partecipa, null altrimenti
+     */
     public String isPartecipanteOfHackathon(Hackathon hackathon) {
         for (Team teamAppartenenza : getListTeamAppartenenza()) { // ricerca dei team a cui partecipa il concorrente
             if (teamAppartenenza.getHackathon().getTitolo().equals(hackathon.getTitolo())) {

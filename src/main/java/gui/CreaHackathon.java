@@ -14,6 +14,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+/**
+ * Schermata per la creazione di un nuovo Hackathon da parte di un organizzatore.
+ * Raccoglie tutti i dati necessari per definire un nuovo Hackathon.
+ */
 public class CreaHackathon {
     private static final JFrame frame = new JFrame("Crea Hackathon");
     private JPanel panel1;
@@ -27,6 +31,13 @@ public class CreaHackathon {
     private JButton okButton;
     private JButton cancelButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Crea Hackathon.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param emailOrganizzatore la email dell'organizzatore che vuole creare l'Hackathon
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public CreaHackathon(JFrame frameChiamante, String emailOrganizzatore, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -72,7 +83,7 @@ public class CreaHackathon {
     }
 
     // conversione da Date a LocalDate
-    public LocalDate dateToLocalDate(Date selectedDate) {
+    private LocalDate dateToLocalDate(Date selectedDate) {
         if (selectedDate == null) {
             return null;
         }

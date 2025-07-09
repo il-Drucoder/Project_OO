@@ -7,6 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+/**
+ * Schermata di dettaglio per la visualizzazione di un documento caricato.
+ * Permette di aprire il documento, visualizzare commenti e, soltanto per i giudici assegnati, aggiungere nuovi commenti.
+ */
 public class PaginaDocumento {
     private static final JFrame frame = new JFrame("Documento");
     private JPanel panel1;
@@ -19,6 +23,16 @@ public class PaginaDocumento {
     private JRadioButton addSignRadioButton;
     private JButton sendCommentButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Pagina documento.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     * @param selectedFile il percorso del file da visualizzare
+     * @param nomeTeam il nome del team che ha caricato tale file
+     * @param titoloHackathon il titolo dell'Hackathon a cui partecipa tale team
+     * @param emailUtente l'email dell'utente che vuole visualizzare la pagina del documento
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public PaginaDocumento(JFrame frameChiamante, String selectedFile, String nomeTeam, String titoloHackathon, String emailUtente, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

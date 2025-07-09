@@ -7,6 +7,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
+/**
+ * Schermata principale per gli utenti con ruolo concorrente.
+ * Offre funzionalità per:
+ * creare team,
+ * partecipare ad un team,
+ * accedere ad un team,
+ * cercare un Hackathon,
+ * effettuare il logout.
+ */
 public class BenvenutoConcorrente {
     private static final JFrame frame = new JFrame("Benvenuto Concorrente");
     private JPanel panel1;
@@ -14,6 +23,13 @@ public class BenvenutoConcorrente {
     private JComboBox<String> comboBoxSceltaAzione;
     private JButton okButton;
 
+    /**
+     * Costruttore che crea un'istanza di una nuova pagina Benvenuto concorrente.
+     *
+     * @param frameChiamante il frame precedente (ovvero quello chiamante)
+     *@param emailConcorrente l'email del concorrente che ha effettuato l'accesso
+     * @param controller il controller utilizzato per interagire con il model
+     */
     public BenvenutoConcorrente(JFrame frameChiamante, String emailConcorrente, Controller controller) {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

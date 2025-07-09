@@ -3,6 +3,10 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe che rappresenta un team nella piattaforma.
+ * Gestisce i membri, i documenti e i voti ricevuti dal team.
+ */
 public class Team {
     // attributi
     private String nome;
@@ -16,7 +20,14 @@ public class Team {
     private final List<Documento> documenti = new ArrayList<>(); // lista documenti pubblicati dal team
 
     // metodi
-    // Costruttore
+    /**
+     * Costruttore che crea un'istanza di un nuovo Team.
+     *
+     * @param nome il nome del Team
+     * @param pw la password del Team
+     * @param hackathon l'Hackathon associato al Team
+     * @param creatore il creatore del Team
+     */
     public Team(String nome, String pw, Hackathon hackathon, Concorrente creatore) {
         this.nome = nome;
         this.pw = pw;
@@ -24,8 +35,20 @@ public class Team {
         this.creatore = creatore;
     }
 
+    /**
+     * Restituisce il nome del team.
+     *
+     * @return nome del team
+     */
     public String getNome() { return nome; }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta il nome del team con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param nome nuovo nome
+     * @throws SecurityException se non autorizzato
+     */
     public void setNome(Concorrente creatore, String nome) {
         if (getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -33,14 +56,27 @@ public class Team {
         this.nome = nome;
     }
 
-    // setter con controllo del creatore
+    /**
+     * Restituisce la password del team con verifica del creatore.
+     *
+     * @param creatore creatore che richiede
+     * @return password del team
+     * @throws SecurityException se non autorizzato
+     */
     public String getPw(Concorrente creatore) {
         if (!getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
         }
         return pw;
     }
-    // setter con controllo del creatore
+
+    /**
+     * Imposta la password del team con verifica del creatore.
+     *
+     * @param creatore creatore che modifica
+     * @param pw nuova password
+     * @throws SecurityException se non autorizzato
+     */
     public void setPw(Concorrente creatore, String pw) {
         if (!getCreatore().equals(creatore)) {
             throw new SecurityException("Accesso negato!");
@@ -48,23 +84,53 @@ public class Team {
         this.pw = pw;
     }
 
-    // metodo per il DAO
+    /**
+     * Restituisce la password del team (senza verifica).
+     * Utilizzato dal DAO
+     *
+     * @return password del team
+     */
     public String getPw() {
         return pw;
     }
 
+    /**
+     * Restituisce l'Hackathon a cui partecipa il team.
+     *
+     * @return Hackathon di riferimento
+     */
     public Hackathon getHackathon() { return hackathon; }
 
+    /**
+     * Restituisce il creatore del team.
+     *
+     * @return concorrente creatore
+     */
     public Concorrente getCreatore() { return creatore; }
 
-    // getter per la lista di voti assegnati al team
+    /**
+     * Restituisce la lista dei voti ricevuti.
+     *
+     * @return lista di Voto
+     */
     public List<Voto> getVoti() { return voti; }
-    // metodo utilizzato dal dumpDatiVoto
+
+    /**
+     * Aggiunge un voto alla lista.
+     *
+     * @param voto voto da aggiungere
+     */
     public void addVoti(Voto voto) {
         voti.add(voto);
     }
 
-    // aggiungi un voto al team
+    /**
+     * Aggiunge un voto con verifica del giudice.
+     *
+     * @param giudice giudice che vota
+     * @param voto voto da aggiungere
+     * @throws SecurityException se il giudice non è autorizzato
+     */
     public void aggiungiVoto(Giudice giudice, Voto voto) {
         if(!giudice.isAssegnato(this)) {
             throw new SecurityException("Accesso negato!");
@@ -72,7 +138,11 @@ public class Team {
         voti.add(voto);
     }
 
-    // calcola la media dei voti
+    /**
+     * Calcola il punteggio medio del team.
+     *
+     * @return punteggio medio
+     */
     public double getPunteggio() {
         if (getVoti().isEmpty()) {
             return 0.0;
@@ -84,14 +154,28 @@ public class Team {
         return (double) somma / getVoti().size();
     }
 
-    // getter per la lista di membri partecipanti al team
+    /**
+     * Restituisce la lista dei membri del team.
+     *
+     * @return lista di Concorrente
+     */
     public List<Concorrente> getMembri() { return membri; }
-    // metodo utilizzato dal dumpDatiPartecipazioneAiTeam
+
+    /**
+     * Aggiunge un membro alla lista.
+     *
+     * @param concorrente membro da aggiungere
+     */
     public void addMembri(Concorrente concorrente) {
         membri.add(concorrente);
     }
 
-    // metodo per aggiungere un nuovo concorrente al team
+    /**
+     * Aggiunge un nuovo membro al team.
+     *
+     * @param concorrente membro da aggiungere
+     * @throws IllegalStateException se il team è al completo
+     */
     public void aggiungiMembro(Concorrente concorrente) {
         // verifica che il team non sia al completo
         if (isCompleto()) {
@@ -100,19 +184,38 @@ public class Team {
         membri.add(concorrente);
     }
 
-    // metodo per verificare la password senza esportarla
+    /**
+     * Verifica la corrispondenza della password.
+     *
+     * @param passwordInserita password da verificare
+     * @return true se corrisponde, false altrimenti
+     */
     public boolean verificaPassword(String passwordInserita) {
         return this.pw.equals(passwordInserita);
     }
 
-    // getter per la lista di documenti creati dal team
+    /**
+     * Restituisce la lista dei documenti del team.
+     *
+     * @return lista di Documento
+     */
     public List<Documento> getDocumenti() { return documenti; }
-    // metodo utilizzato dal dumpDatiDocumento
+
+    /**
+     * Aggiunge un documento alla lista.
+     *
+     * @param documento documento da aggiungere
+     */
     public void addDocumenti(Documento documento) {
         documenti.add(documento);
     }
 
-    // metodo per aggiungere un documento alla lista documenti di un team
+    /**
+     * Aggiunge un nuovo documento al team.
+     *
+     * @param documento documento da aggiungere
+     * @throws IllegalArgumentException se il documento esiste già
+     */
     public void aggiungiDocumento(Documento documento) {
         for (Documento d : getDocumenti()) {
             if (documento.getNomeFile().equals(d.getNomeFile())) {
@@ -122,12 +225,21 @@ public class Team {
         this.documenti.add(documento);
     }
 
-    // metodo per verificare se il team è al completo
+    /**
+     * Verifica se il team è al completo.
+     *
+     * @return true se completo, false altrimenti
+     */
     public boolean isCompleto() {
         return (getMembri().size() == getHackathon().getDimMaxTeam());
     }
 
-    // metodo per verificare se un concorrente fa parte del team
+    /**
+     * Verifica se un concorrente fa parte del team.
+     *
+     * @param concorrente concorrente da verificare
+     * @return true se partecipa, false altrimenti
+     */
     public  boolean isPartecipante(Concorrente concorrente) {
         return getMembri().contains(concorrente);
     }

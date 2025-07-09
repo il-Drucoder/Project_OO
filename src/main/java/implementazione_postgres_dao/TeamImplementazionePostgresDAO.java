@@ -10,11 +10,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementazione concreta dell'interfaccia TeamDAO per PostgreSQL.
+ * Gestisce le operazioni WORM (Write-Once, Read-Many) per i team nel database.
+ */
 public class TeamImplementazionePostgresDAO implements TeamDAO {
 
     private final Connection connessione;
 
-    // Costruttore
+    /**
+     * Costruttore che inizializza la connessione al database.
+     *
+     * @param connessione la connessione al database PostgreSQL
+     */
     public TeamImplementazionePostgresDAO(Connection connessione) {
         this.connessione = connessione;
     }
